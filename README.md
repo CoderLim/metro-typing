@@ -12,7 +12,6 @@
 | 环境 | 域名                                                                                      |
 | ---- | ----------------------------------------------------------------------------------------- |
 | 正式 | [metrotyping.org](https://metrotyping.org)                                                |
-| 测试 | [metro-typing.gengliming110.workers.dev](https://metro-typing.gengliming110.workers.dev/) |
 
 ## 截图
 
