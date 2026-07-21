@@ -7,6 +7,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
   type ErrorComponentProps,
 } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -109,7 +110,7 @@ export const Route = createRootRoute({
         },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap',
         },
         ...locales.map((loc) => ({
           rel: 'alternate',
@@ -132,6 +133,10 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const analytics = Route.useLoaderData();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const canShowAds = isAdEligiblePath(pathname);
 
   return (
     <QueryClientProvider client={getQueryClient()}>
@@ -154,7 +159,9 @@ function RootComponent() {
             src={analytics.plausibleSrc || undefined}
           />
         ) : null}
-        {analytics?.adsenseCode ? <Ads code={analytics.adsenseCode} /> : null}
+        {analytics?.adsenseCode && canShowAds ? (
+          <Ads code={analytics.adsenseCode} />
+        ) : null}
         <CustomerService
           crispWebsiteId={analytics?.crispWebsiteId || undefined}
           tawkPropertyId={analytics?.tawkPropertyId || undefined}
@@ -163,6 +170,30 @@ function RootComponent() {
       </ThemeProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
+  );
+}
+
+function isAdEligiblePath(pathname: string): boolean {
+  if (
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/sign-in') ||
+    pathname.startsWith('/sign-up') ||
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/reset-password') ||
+    pathname.startsWith('/verify-email') ||
+    pathname.startsWith('/redeem-invite') ||
+    pathname.startsWith('/api/')
+  ) {
+    return false;
+  }
+
+  return (
+    pathname === '/' ||
+    pathname === '/blog' ||
+    pathname.startsWith('/blog/') ||
+    pathname === '/about' ||
+    pathname === '/contact'
   );
 }
 

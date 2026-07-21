@@ -81,8 +81,10 @@ export const envConfigs: Record<string, string> = {
   // Locale (public)
   locale: publicEnv('VITE_DEFAULT_LOCALE') ?? 'en',
 
-  // Analytics — Plausible-compatible (incl. PageView). DB admin settings
-  // override these when present; env is the fallback for sites without admin.
+  // Analytics — DB admin settings override these when present; env is the
+  // fallback for sites without admin (e.g. this landing page).
+  google_analytics_id: procEnv.GOOGLE_ANALYTICS_ID ?? '',
   plausible_domain: procEnv.PLAUSIBLE_DOMAIN ?? '',
   plausible_src: procEnv.PLAUSIBLE_SRC ?? '',
+  adsense_code: procEnv.ADSENSE_CODE ?? '',
 };

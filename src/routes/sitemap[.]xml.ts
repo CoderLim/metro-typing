@@ -4,7 +4,16 @@ import { envConfigs } from '@/config';
 import { baseLocale, locales, localizeUrl } from '@/paraglide/runtime.js';
 import { getLocalPosts, mergePosts } from '@/content/posts';
 
-const STATIC_PATHS = ['', '/blog', '/privacy-policy', '/terms-of-service'];
+const STATIC_PATHS = [
+  '',
+  '/nation/cn',
+  '/nation/jp',
+  '/blog',
+  '/about',
+  '/contact',
+  '/privacy-policy',
+  '/terms-of-service',
+];
 
 type Entry = {
   path: string;

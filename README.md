@@ -9,10 +9,7 @@
 
 ## 站点
 
-| 环境 | 域名                                                                                      |
-| ---- | ----------------------------------------------------------------------------------------- |
-| 正式 | [metrotyping.org](https://metrotyping.org)                                                |
-| 测试 | [metro-typing.gengliming110.workers.dev](https://metro-typing.gengliming110.workers.dev/) |
+正式域名：[metrotyping.org](https://metrotyping.org)
 
 游戏本体通过 iframe 嵌入自 [metrotyping.kr](https://metrotyping.kr/)。本仓库提供落地页、SEO 内容、多语言与部署壳。
 

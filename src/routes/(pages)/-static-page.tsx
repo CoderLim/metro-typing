@@ -25,6 +25,7 @@ const pages = import.meta.glob<PageModule>('/src/content/pages/*.mdx', {
 function loadPage(slug: string, locale: string): PageModule | null {
   return (
     pages[`/src/content/pages/${slug}.${locale}.mdx`] ??
+    pages[`/src/content/pages/${slug}.en.mdx`] ??
     pages[`/src/content/pages/${slug}.${baseLocale}.mdx`] ??
     null
   );

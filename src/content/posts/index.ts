@@ -12,8 +12,8 @@ import { baseLocale } from '@/paraglide/runtime.js';
  * local posts via the pure helpers below.
  */
 export const BLOG_POST_SLUGS = [
-  'what-is-shipany',
-  'blocks-vs-components',
+  'hangul-typing-rhythm',
+  'seoul-subway-line-memory',
 ] as const;
 
 export type BlogPostMeta = {
@@ -106,9 +106,18 @@ export function mergePosts(
 }
 
 export function formatPostDate(dateIso: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
+  const localeTag =
+    locale === 'zh'
+      ? 'zh-CN'
+      : locale === 'ja'
+        ? 'ja-JP'
+        : locale === 'ko'
+          ? 'ko-KR'
+          : 'en-US';
+  return new Intl.DateTimeFormat(localeTag, {
     year: 'numeric',
-    month: locale === 'zh' ? 'long' : 'short',
+    month:
+      locale === 'zh' || locale === 'ja' || locale === 'ko' ? 'long' : 'short',
     day: 'numeric',
   }).format(new Date(dateIso));
 }

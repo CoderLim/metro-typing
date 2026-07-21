@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import { envConfigs } from '@/config';
-import { DEFAULT_NATION } from '@/config/nations';
+import { isNationCode, type NationCode } from '@/config/nations';
 import { m } from '@/paraglide/messages.js';
 import {
   getLocale,
@@ -21,11 +21,26 @@ const OG_LOCALE: Record<string, string> = {
   ja: 'ja_JP',
 };
 
-function HomePage() {
+function nationMeta(nation: Exclude<NationCode, 'kr'>, locale: Locale) {
+  if (nation === 'cn') {
+    return {
+      title: m['landing.game.meta_title_cn']({}, { locale }),
+      description: m['landing.game.meta_description_cn']({}, { locale }),
+    };
+  }
+  return {
+    title: m['landing.game.meta_title_jp']({}, { locale }),
+    description: m['landing.game.meta_description_jp']({}, { locale }),
+  };
+}
+
+function NationPage() {
+  const { nation } = Route.useLoaderData();
+
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
-      <GameEmbed nation={DEFAULT_NATION} />
+      <GameEmbed nation={nation} />
       <main>
         <SeoContent />
       </main>
@@ -34,19 +49,24 @@ function HomePage() {
   );
 }
 
-export const Route = createFileRoute('/')({
-  loader: () => {
+export const Route = createFileRoute('/nation/$nation')({
+  beforeLoad: ({ params }) => {
+    if (!isNationCode(params.nation) || params.nation === 'kr') {
+      throw redirect({ to: '/' });
+    }
+  },
+  loader: ({ params }) => {
     const locale = getLocale();
-    return {
-      locale,
-      title: m['common.metadata.title']({}, { locale }),
-      description: m['common.metadata.description']({}, { locale }),
-    };
+    const nation = params.nation as Exclude<NationCode, 'kr'>;
+    const meta = nationMeta(nation, locale);
+    return { locale, nation, ...meta };
   },
   head: ({ loaderData }) => {
     const locale = (loaderData?.locale ?? 'ko') as Locale;
+    const nation = loaderData?.nation ?? 'cn';
     const appUrl = envConfigs.app_url;
-    const canonical = localizeUrl(`${appUrl}/`, { locale }).href;
+    const path = `/nation/${nation}`;
+    const canonical = localizeUrl(`${appUrl}${path}`, { locale }).href;
     return {
       meta: [
         { title: loaderData?.title ?? envConfigs.app_name },
@@ -75,15 +95,15 @@ export const Route = createFileRoute('/')({
         ...locales.map((loc) => ({
           rel: 'alternate',
           hrefLang: loc,
-          href: localizeUrl(`${appUrl}/`, { locale: loc }).href,
+          href: localizeUrl(`${appUrl}${path}`, { locale: loc }).href,
         })),
         {
           rel: 'alternate',
           hrefLang: 'x-default',
-          href: localizeUrl(`${appUrl}/`, { locale: 'ko' }).href,
+          href: localizeUrl(`${appUrl}${path}`, { locale: 'ko' }).href,
         },
       ],
     };
   },
-  component: HomePage,
+  component: NationPage,
 });

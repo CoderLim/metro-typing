@@ -2,6 +2,7 @@ import { Link } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { m } from '@/paraglide/messages.js';
 import { LocaleSelector } from '@/components/locale-selector';
+import { NationSelector } from '@/components/nation-selector';
 
 export function Header() {
   const navLinks = [
@@ -40,7 +41,8 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <NationSelector />
           <LocaleSelector />
           <a
             href="#play"
