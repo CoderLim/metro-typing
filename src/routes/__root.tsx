@@ -7,6 +7,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
   type ErrorComponentProps,
 } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -15,7 +16,7 @@ import { ThemeProvider } from 'next-themes';
 import { envConfigs } from '@/config';
 import { getQueryClient } from '@/lib/query-client';
 import { getLocale, locales, localizeUrl } from '@/paraglide/runtime.js';
-import { Ads } from '@/components/analytics/ads';
+import { AdsAccountMeta, AdsLoader } from '@/components/analytics/ads';
 import { GoogleAnalytics } from '@/components/analytics/google-analytics';
 import { Plausible } from '@/components/analytics/plausible';
 import { CustomerService } from '@/components/customer-service';
@@ -132,6 +133,10 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const analytics = Route.useLoaderData();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const isAdContentPage = /^\/(?:[a-z]{2}\/)?blog\/[^/]+\/?$/.test(pathname);
 
   return (
     <QueryClientProvider client={getQueryClient()}>
@@ -154,7 +159,12 @@ function RootComponent() {
             src={analytics.plausibleSrc || undefined}
           />
         ) : null}
-        {analytics?.adsenseCode ? <Ads code={analytics.adsenseCode} /> : null}
+        {analytics?.adsenseCode ? (
+          <AdsAccountMeta code={analytics.adsenseCode} />
+        ) : null}
+        {analytics?.adsenseCode && isAdContentPage ? (
+          <AdsLoader code={analytics.adsenseCode} />
+        ) : null}
         <CustomerService
           crispWebsiteId={analytics?.crispWebsiteId || undefined}
           tawkPropertyId={analytics?.tawkPropertyId || undefined}
