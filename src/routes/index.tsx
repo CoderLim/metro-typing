@@ -21,8 +21,8 @@ const OG_LOCALE: Record<string, string> = {
 function HomePage() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
-      <GameEmbed />
       <Header />
+      <GameEmbed />
       <main>
         <SeoContent />
       </main>

@@ -5,11 +5,12 @@ import { LocaleSelector } from '@/components/locale-selector';
 
 export function Header() {
   const navLinks = [
-    { href: '#play', label: m['landing.nav.play']() },
-    { href: '#about', label: m['landing.nav.about']() },
-    { href: '#howto', label: m['landing.nav.howto']() },
-    { href: '#tips', label: m['landing.nav.tips']() },
-    { href: '#faq', label: m['landing.nav.faq']() },
+    { href: '/#play', label: m['landing.nav.play']() },
+    { href: '/#about', label: m['landing.nav.about']() },
+    { href: '/#howto', label: m['landing.nav.howto']() },
+    { href: '/#tips', label: m['landing.nav.tips']() },
+    { href: '/blog', label: m['landing.nav.blog'](), route: true },
+    { href: '/#faq', label: m['landing.nav.faq']() },
   ];
 
   return (
@@ -29,21 +30,31 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-5 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.route ? (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
           <LocaleSelector />
           <a
-            href="#play"
+            href="/#play"
             className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm font-medium"
           >
             {m['landing.nav.play']()}
