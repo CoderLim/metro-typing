@@ -44,6 +44,7 @@ export const Route = createFileRoute('/')({
     const locale = (loaderData?.locale ?? 'ko') as Locale;
     const appUrl = envConfigs.app_url;
     const canonical = localizeUrl(`${appUrl}/`, { locale }).href;
+    const ogImage = `${appUrl}/imgs/screenshots/playing.png`;
     return {
       meta: [
         { title: loaderData?.title ?? envConfigs.app_name },
@@ -65,7 +66,12 @@ export const Route = createFileRoute('/')({
           property: 'og:locale',
           content: OG_LOCALE[locale] ?? 'ko_KR',
         },
+        { property: 'og:image', content: ogImage },
+        { property: 'og:image:width', content: '1280' },
+        { property: 'og:image:height', content: '800' },
+        { property: 'og:image:alt', content: 'Metro Typing gameplay' },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:image', content: ogImage },
       ],
       links: [
         { rel: 'canonical', href: canonical },
