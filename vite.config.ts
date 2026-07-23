@@ -83,18 +83,20 @@ export default defineConfig({
           ],
         },
         // baseLocale (ko) has no prefix; English lives under /en.
+        // Prefixed locales MUST come before the unprefixed ko wildcard,
+        // otherwise /en/* is swallowed as a Korean path and 404s.
         {
           pattern: '/',
           localized: [
-            ['ko', '/'],
             ['en', '/en'],
+            ['ko', '/'],
           ],
         },
         {
           pattern: '/:path(.*)?',
           localized: [
-            ['ko', '/:path(.*)?'],
             ['en', '/en/:path(.*)?'],
+            ['ko', '/:path(.*)?'],
           ],
         },
       ],
