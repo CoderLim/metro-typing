@@ -53,12 +53,6 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <LocaleSelector />
-          <a
-            href="/#play"
-            className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm font-medium"
-          >
-            {m['landing.nav.play']()}
-          </a>
         </div>
       </div>
     </header>
