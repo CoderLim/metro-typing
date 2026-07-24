@@ -7,10 +7,10 @@ export function Footer() {
       title: m['landing.footer.explore'](),
       links: [
         { label: m['landing.nav.play'](), href: '/#play' },
-        { label: m['landing.nav.about'](), href: '/#about' },
-        { label: m['landing.nav.howto'](), href: '/#howto' },
-        { label: m['landing.nav.tips'](), href: '/#tips' },
-        { label: m['landing.nav.faq'](), href: '/#faq' },
+        { label: m['landing.nav.howto'](), href: '/how-to-play' },
+        { label: m['landing.nav.tips'](), href: '/tips' },
+        { label: m['landing.nav.lines'](), href: '/supported-lines' },
+        { label: m['landing.nav.faq'](), href: '/faq' },
         {
           label: m['landing.footer.chrome_extension'](),
           href: 'https://chromewebstore.google.com/detail/metro-typing-launcher/amfhlibeegkheaikcojjlhihkpggfhbc',

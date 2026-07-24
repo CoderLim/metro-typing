@@ -9,6 +9,10 @@ const STATIC_PATHS = [
   '/blog',
   '/about',
   '/contact',
+  '/how-to-play',
+  '/tips',
+  '/supported-lines',
+  '/faq',
   '/privacy-policy',
   '/terms-of-service',
 ];

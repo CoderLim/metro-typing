@@ -5,8 +5,42 @@ import { baseLocale } from '@/paraglide/runtime.js';
 import { getLocalPosts, mergePosts } from '@/content/posts';
 
 const STATIC_PAGES: { path: string; title: string; description: string }[] = [
-  { path: '', title: 'Home', description: 'Landing page' },
+  {
+    path: '',
+    title: 'Home',
+    description: 'Landing page with playable Metro Typing embed',
+  },
+  {
+    path: '/how-to-play',
+    title: 'How to play',
+    description: 'Full Metro Typing guide: modes, settings, and flow',
+  },
+  {
+    path: '/tips',
+    title: 'Tips',
+    description: 'How to improve accuracy and personal records',
+  },
+  {
+    path: '/supported-lines',
+    title: 'Supported lines',
+    description: 'Regions and railway lines you can practice',
+  },
+  {
+    path: '/faq',
+    title: 'FAQ',
+    description: 'Free play, login, mobile, apps, and site scope',
+  },
+  {
+    path: '/about',
+    title: 'About',
+    description: 'Independent guide and play page for Metro Typing',
+  },
   { path: '/blog', title: 'Blog', description: 'Blog posts and articles' },
+  {
+    path: '/contact',
+    title: 'Contact',
+    description: 'Contact the site operator',
+  },
 ];
 
 export const Route = createFileRoute('/llms-full.txt')({

@@ -12,6 +12,10 @@ import { baseLocale } from '@/paraglide/runtime.js';
  * local posts via the pure helpers below.
  */
 export const BLOG_POST_SLUGS = [
+  'beginner-first-line',
+  'route-quiz-guide',
+  'hangul-vs-english-input',
+  'line-2-loop-challenge',
   'hangul-typing-rhythm',
   'seoul-subway-line-memory',
 ] as const;

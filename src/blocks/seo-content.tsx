@@ -1,3 +1,4 @@
+import { Link } from '@/core/i18n/navigation';
 import { m } from '@/paraglide/messages.js';
 
 function SeoImage({
@@ -25,6 +26,19 @@ function SeoImage({
         className="h-auto w-full object-cover"
       />
     </figure>
+  );
+}
+
+function GuideLink({ href, children }: { href: string; children: string }) {
+  return (
+    <p className="mt-6">
+      <Link
+        href={href}
+        className="text-primary text-base font-medium underline-offset-4 hover:underline sm:text-lg"
+      >
+        {children}
+      </Link>
+    </p>
   );
 }
 
@@ -82,6 +96,9 @@ export function SeoContent() {
             <p>{m['landing.seo.howto.p3']()}</p>
             <p>{m['landing.seo.howto.p4']()}</p>
           </div>
+          <GuideLink href="/how-to-play">
+            {m['landing.seo.howto.read_more']()}
+          </GuideLink>
         </div>
       </section>
 
@@ -104,6 +121,9 @@ export function SeoContent() {
             <p>{m['landing.seo.lines.p2']()}</p>
             <p>{m['landing.seo.lines.p3']()}</p>
           </div>
+          <GuideLink href="/supported-lines">
+            {m['landing.seo.lines.read_more']()}
+          </GuideLink>
         </div>
       </section>
 
@@ -120,6 +140,9 @@ export function SeoContent() {
             <p>{m['landing.seo.tips.p2']()}</p>
             <p>{m['landing.seo.tips.p3']()}</p>
           </div>
+          <GuideLink href="/tips">
+            {m['landing.seo.tips.read_more']()}
+          </GuideLink>
         </div>
       </section>
 
@@ -157,6 +180,7 @@ export function SeoContent() {
               </div>
             ))}
           </dl>
+          <GuideLink href="/faq">{m['landing.seo.faq.read_more']()}</GuideLink>
         </div>
       </section>
     </div>

@@ -7,11 +7,12 @@ import { LocaleSelector } from '@/components/locale-selector';
 export function Header() {
   const navLinks = [
     { href: '/#play', label: m['landing.nav.play']() },
-    { href: '/#about', label: m['landing.nav.about']() },
-    { href: '/#howto', label: m['landing.nav.howto']() },
-    { href: '/#tips', label: m['landing.nav.tips']() },
+    { href: '/how-to-play', label: m['landing.nav.howto'](), route: true },
+    { href: '/tips', label: m['landing.nav.tips'](), route: true },
+    { href: '/supported-lines', label: m['landing.nav.lines'](), route: true },
     { href: '/blog', label: m['landing.nav.blog'](), route: true },
-    { href: '/#faq', label: m['landing.nav.faq']() },
+    { href: '/about', label: m['landing.nav.about'](), route: true },
+    { href: '/faq', label: m['landing.nav.faq'](), route: true },
     {
       href: 'https://73-9.org',
       label: m['landing.nav.game_739'](),

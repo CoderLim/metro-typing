@@ -845,5 +845,15 @@
   "landing.footer.chrome_extension": "Chrome 扩展",
   "landing.nav.game_739": "73-9",
   "landing.nav.game_739_badge": "New",
-  "landing.footer.game_739": "73-9"
+  "landing.footer.game_739": "73-9",
+  "landing.nav.play": "游玩",
+  "landing.nav.about": "介绍",
+  "landing.nav.howto": "玩法",
+  "landing.nav.faq": "FAQ",
+  "landing.nav.lines": "线路",
+  "landing.nav.tips": "技巧",
+  "landing.seo.howto.read_more": "阅读完整玩法指南",
+  "landing.seo.lines.read_more": "查看支持线路与选线建议",
+  "landing.seo.tips.read_more": "阅读更多提分技巧",
+  "landing.seo.faq.read_more": "查看全部常见问题"
 }
