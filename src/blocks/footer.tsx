@@ -11,6 +11,10 @@ export function Footer() {
         { label: m['landing.nav.howto'](), href: '/#howto' },
         { label: m['landing.nav.tips'](), href: '/#tips' },
         { label: m['landing.nav.faq'](), href: '/#faq' },
+        {
+          label: m['landing.footer.chrome_extension'](),
+          href: 'https://chromewebstore.google.com/detail/metro-typing-launcher/amfhlibeegkheaikcojjlhihkpggfhbc',
+        },
       ],
     },
     {

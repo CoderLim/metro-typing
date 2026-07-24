@@ -840,5 +840,7 @@
   "landing.blog.title": "最新博客",
   "landing.blog.description": "关于 Metro Typing、韩文输入节奏和地铁线路记忆的指南。",
   "landing.blog.view_all": "查看全部文章",
-  "landing.footer.blog": "博客"
+  "landing.footer.blog": "博客",
+  "landing.footer.explore": "探索",
+  "landing.footer.chrome_extension": "Chrome 扩展"
 }
