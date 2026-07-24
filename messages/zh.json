@@ -842,5 +842,8 @@
   "landing.blog.view_all": "查看全部文章",
   "landing.footer.blog": "博客",
   "landing.footer.explore": "探索",
-  "landing.footer.chrome_extension": "Chrome 扩展"
+  "landing.footer.chrome_extension": "Chrome 扩展",
+  "landing.nav.game_739": "73-9",
+  "landing.nav.game_739_badge": "New",
+  "landing.footer.game_739": "73-9"
 }

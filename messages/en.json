@@ -884,11 +884,14 @@
   "landing.nav.about": "About",
   "landing.nav.howto": "How to play",
   "landing.nav.faq": "FAQ",
+  "landing.nav.game_739": "73-9",
+  "landing.nav.game_739_badge": "New",
   "landing.seo.img.select_alt": "Metro Typing screen for choosing a subway line such as the Sillim Line",
   "landing.seo.img.playing_alt": "Metro Typing gameplay screen while typing a station name",
   "landing.seo.img.result_alt": "Metro Typing progress and typing speed during a run",
   "landing.footer.explore": "Explore",
   "landing.footer.original": "Original game",
   "landing.footer.chrome_extension": "Chrome Extension",
+  "landing.footer.game_739": "73-9",
   "landing.game.open_original": "Open on the original site"
 }

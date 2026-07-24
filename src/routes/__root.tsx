@@ -142,7 +142,7 @@ function RootComponent() {
     <QueryClientProvider client={getQueryClient()}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="dark"
         enableSystem
         disableTransitionOnChange
       >
@@ -180,6 +180,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang={getLocale()} suppressHydrationWarning>
       <head>
+        <script src="/theme-init.js" />
         <HeadContent />
       </head>
       <body className="font-sans antialiased">
