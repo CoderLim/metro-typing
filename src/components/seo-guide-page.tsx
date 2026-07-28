@@ -15,13 +15,30 @@ export function SeoGuidePage({
   relatedBaseHref,
   backHref,
   backLabel,
+  locale,
 }: {
   guide: ResolvedSeoGuide;
   related: GuideSummary[];
   relatedBaseHref: string;
   backHref: string;
   backLabel: string;
+  locale: string;
 }) {
+  const korean = locale === 'ko';
+  const labels = korean
+    ? {
+        updated: '업데이트',
+        checklist: '연습 체크리스트',
+        related: '관련 가이드',
+        read: '가이드 읽기',
+      }
+    : {
+        updated: 'Updated',
+        checklist: 'Practice checklist',
+        related: 'Related guides',
+        read: 'Read guide',
+      };
+
   return (
     <article>
       <header className="border-border mb-8 border-b pb-6">
@@ -35,7 +52,7 @@ export function SeoGuidePage({
           {guide.description}
         </p>
         <p className="text-muted-foreground mt-3 text-xs">
-          Updated: {guide.updatedAt}
+          {labels.updated}: {guide.updatedAt}
         </p>
       </header>
 
@@ -64,7 +81,7 @@ export function SeoGuidePage({
 
         <section className="border-border bg-muted/35 rounded-xl border p-5 md:p-6">
           <h2 className="text-foreground mb-4 text-xl font-semibold">
-            Practice checklist
+            {labels.checklist}
           </h2>
           <ul className="space-y-3">
             {guide.checklist.map((item) => (
@@ -81,7 +98,7 @@ export function SeoGuidePage({
       {related.length > 0 ? (
         <aside className="border-border mt-12 border-t pt-8">
           <h2 className="text-foreground text-xl font-semibold">
-            Related guides
+            {labels.related}
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {related.map((item) => (
@@ -95,7 +112,7 @@ export function SeoGuidePage({
                   {item.description}
                 </p>
                 <span className="text-primary mt-3 inline-flex items-center gap-1 text-sm font-medium">
-                  Read guide
+                  {labels.read}
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
