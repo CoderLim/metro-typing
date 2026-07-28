@@ -7,7 +7,6 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  useRouterState,
   type ErrorComponentProps,
 } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -133,10 +132,6 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const analytics = Route.useLoaderData();
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  });
-  const isAdContentPage = /^\/(?:[a-z]{2}\/)?blog\/[^/]+\/?$/.test(pathname);
 
   return (
     <QueryClientProvider client={getQueryClient()}>
@@ -150,6 +145,12 @@ function RootComponent() {
         <SandboxPreviewBridge />
         <Toaster position="top-center" richColors />
         <GoogleOneTap />
+        {analytics?.adsenseCode ? (
+          <>
+            <AdsAccountMeta code={analytics.adsenseCode} />
+            <AdsLoader code={analytics.adsenseCode} />
+          </>
+        ) : null}
         {analytics?.gaId ? (
           <GoogleAnalytics measurementId={analytics.gaId} />
         ) : null}
@@ -158,12 +159,6 @@ function RootComponent() {
             domain={analytics.plausibleDomain}
             src={analytics.plausibleSrc || undefined}
           />
-        ) : null}
-        {analytics?.adsenseCode ? (
-          <AdsAccountMeta code={analytics.adsenseCode} />
-        ) : null}
-        {analytics?.adsenseCode && isAdContentPage ? (
-          <AdsLoader code={analytics.adsenseCode} />
         ) : null}
         <CustomerService
           crispWebsiteId={analytics?.crispWebsiteId || undefined}
