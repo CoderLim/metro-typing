@@ -2,8 +2,8 @@
 
 import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
 
- type GoogleFcApi = {
-  callbackQueue?: Array<Record<string, () => void>>;
+type GoogleFcApi = {
+  callbackQueue?: Array<() => void>;
   showRevocationMessage?: () => void;
 };
 
@@ -26,26 +26,19 @@ export function PrivacyChoicesButton() {
     const googlefc = (window.googlefc ??= {});
     googlefc.callbackQueue ??= [];
 
-    let opened = false;
-    googlefc.callbackQueue.push({
-      CONSENT_API_READY: () => {
-        if (typeof googlefc.showRevocationMessage === 'function') {
-          opened = true;
-          googlefc.showRevocationMessage();
-        }
-      },
-    });
+    if (typeof googlefc.showRevocationMessage === 'function') {
+      // Official Google Privacy & Messaging revocation flow.
+      googlefc.callbackQueue.push(googlefc.showRevocationMessage);
+      return;
+    }
 
     // If the AdSense message has not been published or the API is blocked,
     // keep the control useful by opening the detailed cookie disclosure.
-    window.setTimeout(() => {
-      if (opened) return;
-      const privacyUrl = localizeUrl(
-        `${window.location.origin}/privacy-policy`,
-        { locale }
-      ).href;
-      window.location.assign(`${privacyUrl}#cookie-choices`);
-    }, 900);
+    const privacyUrl = localizeUrl(
+      `${window.location.origin}/privacy-policy`,
+      { locale }
+    ).href;
+    window.location.assign(`${privacyUrl}#cookie-choices`);
   };
 
   return (
