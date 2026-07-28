@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_ENV: production
+      VITE_APP_URL: https://metrotyping.org
+      VITE_APP_NAME: Metro Typing
+      VITE_APP_DESCRIPTION: Seoul subway station typing game guides and practice
+      VITE_DEFAULT_LOCALE: ko
+      DATABASE_PROVIDER: sqlite
+      DATABASE_URL: file:data/ci.db
+      AUTH_SECRET: ci-only-secret-not-used-in-production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
