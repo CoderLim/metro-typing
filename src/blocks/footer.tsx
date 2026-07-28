@@ -1,4 +1,5 @@
 import { m } from '@/paraglide/messages.js';
+import { PrivacyChoicesButton } from '@/components/privacy-choices-button';
 import { SiteFooter, type FooterColumn } from '@/components/site-footer';
 
 export function Footer() {
@@ -37,6 +38,7 @@ export function Footer() {
       tagline={m['landing.footer.tagline']()}
       columns={columns}
       socials={[]}
+      extra={<PrivacyChoicesButton />}
     />
   );
 }
