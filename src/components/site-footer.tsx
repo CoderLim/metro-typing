@@ -1,4 +1,4 @@
-import type { ComponentType, SVGProps } from 'react';
+import type { ComponentType, ReactNode, SVGProps } from 'react';
 
 import { Link } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
@@ -26,13 +26,17 @@ export function SiteFooter({
   columns,
   socials,
   copyright,
+  extra,
 }: {
   tagline?: string;
   columns?: FooterColumn[];
   socials?: FooterSocial[];
   copyright?: string;
+  extra?: ReactNode;
 }) {
   const year = new Date().getFullYear();
+  const locale = getLocale();
+  const footerNavLabel = locale === 'ko' ? '바닥글 탐색' : 'Footer navigation';
 
   return (
     <footer className="bg-neutral-950 text-neutral-100">
@@ -44,48 +48,50 @@ export function SiteFooter({
         )}
 
         {columns && columns.length > 0 && (
-          <div
-            className={cn(
-              'grid gap-x-8 gap-y-10 sm:gap-x-12',
-              columns.length <= 3
-                ? 'grid-cols-2 sm:grid-cols-3'
-                : columns.length === 4
-                  ? 'grid-cols-2 sm:grid-cols-4'
-                  : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
-            )}
-          >
-            {columns.map((col) => (
-              <div key={col.title} className="space-y-5">
-                <p className="text-[13px] font-semibold tracking-wide text-neutral-100">
-                  {col.title}
-                </p>
-                <ul className="space-y-2">
-                  {col.links.map((link) => (
-                    <li key={link.label}>
-                      {isExternalHref(link.href) ? (
-                        <a
-                          href={link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-neutral-400 transition-colors hover:text-neutral-100"
-                        >
-                          {link.label}
-                        </a>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          target={link.external ? '_blank' : undefined}
-                          className="text-sm text-neutral-400 transition-colors hover:text-neutral-100"
-                        >
-                          {link.label}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <nav aria-label={footerNavLabel} data-nosnippet>
+            <div
+              className={cn(
+                'grid gap-x-8 gap-y-10 sm:gap-x-12',
+                columns.length <= 3
+                  ? 'grid-cols-2 sm:grid-cols-3'
+                  : columns.length === 4
+                    ? 'grid-cols-2 sm:grid-cols-4'
+                    : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
+              )}
+            >
+              {columns.map((col) => (
+                <div key={col.title} className="space-y-5">
+                  <p className="text-[13px] font-semibold tracking-wide text-neutral-100">
+                    {col.title}
+                  </p>
+                  <ul className="space-y-2">
+                    {col.links.map((link) => (
+                      <li key={link.label}>
+                        {isExternalHref(link.href) ? (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-neutral-400 transition-colors hover:text-neutral-100"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            href={link.href}
+                            target={link.external ? '_blank' : undefined}
+                            className="text-sm text-neutral-400 transition-colors hover:text-neutral-100"
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </nav>
         )}
 
         {/* Socials + language row */}
@@ -113,10 +119,11 @@ export function SiteFooter({
               {locales.map((loc) => (
                 <button
                   key={loc}
+                  type="button"
                   onClick={() => setLocale(loc)}
                   className={cn(
                     'text-sm transition-colors',
-                    loc === getLocale()
+                    loc === locale
                       ? 'font-semibold text-neutral-100'
                       : 'text-neutral-400 hover:text-neutral-200'
                   )}
@@ -129,11 +136,12 @@ export function SiteFooter({
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-6 border-t border-neutral-800 pt-5">
+        <div className="mt-6 flex flex-col gap-3 border-t border-neutral-800 pt-5 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-neutral-400">
             {copyright ||
               `© ${year} ${envConfigs.app_name}. All rights reserved.`}
           </span>
+          {extra}
         </div>
       </div>
     </footer>
