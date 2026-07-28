@@ -2,6 +2,7 @@ import { Link } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { cn } from '@/lib/utils';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 import { LocaleSelector } from '@/components/locale-selector';
 
 export function Header() {
@@ -20,11 +21,12 @@ export function Header() {
       featured: true,
     },
   ];
+  const navLabel = getLocale() === 'ko' ? '주요 탐색' : 'Primary navigation';
 
   return (
     <header className="border-border bg-background/90 sticky top-0 z-40 w-full border-b backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" aria-label={envConfigs.app_name}>
           <img
             src="/logo.png"
             alt="Metro Typing"
@@ -37,7 +39,11 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-5 md:flex">
+        <nav
+          aria-label={navLabel}
+          data-nosnippet
+          className="hidden items-center gap-5 md:flex"
+        >
           {navLinks.map((link) =>
             link.external ? (
               <a
