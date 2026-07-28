@@ -1,6 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { envConfigs } from '@/config';
+import {
+  LINE_GUIDE_SLUGS,
+  PRACTICE_GUIDE_SLUGS,
+} from '@/content/seo-guides';
 import { baseLocale, locales, localizeUrl } from '@/paraglide/runtime.js';
 import { getLocalPosts, mergePosts } from '@/content/posts';
 
@@ -15,6 +19,11 @@ const STATIC_PATHS = [
   '/faq',
   '/privacy-policy',
   '/terms-of-service',
+];
+
+const GUIDE_PATHS = [
+  ...LINE_GUIDE_SLUGS.map((slug) => `/lines/${slug}`),
+  ...PRACTICE_GUIDE_SLUGS.map((slug) => `/practice/${slug}`),
 ];
 
 type Entry = {
@@ -59,6 +68,15 @@ export const Route = createFileRoute('/sitemap.xml')({
           changeFrequency: path === '/blog' ? 'daily' : 'weekly',
           priority: path === '' ? 1 : 0.8,
         }));
+
+        for (const path of GUIDE_PATHS) {
+          entries.push({
+            path,
+            lastModified: '2026-07-28',
+            changeFrequency: 'monthly',
+            priority: 0.7,
+          });
+        }
 
         // Blog posts: db posts merged with local MDX posts.
         try {
