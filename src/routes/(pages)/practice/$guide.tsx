@@ -1,12 +1,12 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 
-import { envConfigs } from '@/config';
+import { localeSeoLinks } from '@/core/i18n/seo';
+import { getLocale } from '@/paraglide/runtime.js';
+import { SeoGuidePage } from '@/components/seo-guide-page';
 import {
   getPracticeGuide,
   getPracticeGuideSummaries,
 } from '@/content/seo-guides';
-import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
-import { SeoGuidePage } from '@/components/seo-guide-page';
 
 export const Route = createFileRoute('/(pages)/practice/$guide')({
   loader: ({ params }) => {
@@ -23,10 +23,10 @@ export const Route = createFileRoute('/(pages)/practice/$guide')({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { guide, locale } = loaderData;
-    const canonical = localizeUrl(
-      `${envConfigs.app_url}/practice/${guide.slug}`,
-      { locale }
-    ).href;
+    const { canonical, links } = localeSeoLinks(
+      `/practice/${guide.slug}`,
+      locale
+    );
 
     return {
       meta: [
@@ -34,9 +34,10 @@ export const Route = createFileRoute('/(pages)/practice/$guide')({
         { name: 'description', content: guide.description },
         { property: 'og:title', content: guide.title },
         { property: 'og:description', content: guide.description },
+        { property: 'og:url', content: canonical },
         { property: 'og:type', content: 'article' },
       ],
-      links: [{ rel: 'canonical', href: canonical }],
+      links,
     };
   },
   component: PracticeGuidePage,

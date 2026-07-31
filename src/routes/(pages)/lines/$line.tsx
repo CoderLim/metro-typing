@@ -1,12 +1,9 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 
-import { envConfigs } from '@/config';
-import {
-  getLineGuide,
-  getLineGuideSummaries,
-} from '@/content/seo-guides';
-import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
+import { localeSeoLinks } from '@/core/i18n/seo';
+import { getLocale } from '@/paraglide/runtime.js';
 import { SeoGuidePage } from '@/components/seo-guide-page';
+import { getLineGuide, getLineGuideSummaries } from '@/content/seo-guides';
 
 export const Route = createFileRoute('/(pages)/lines/$line')({
   loader: ({ params }) => {
@@ -23,10 +20,7 @@ export const Route = createFileRoute('/(pages)/lines/$line')({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { guide, locale } = loaderData;
-    const canonical = localizeUrl(
-      `${envConfigs.app_url}/lines/${guide.slug}`,
-      { locale }
-    ).href;
+    const { canonical, links } = localeSeoLinks(`/lines/${guide.slug}`, locale);
 
     return {
       meta: [
@@ -34,9 +28,10 @@ export const Route = createFileRoute('/(pages)/lines/$line')({
         { name: 'description', content: guide.description },
         { property: 'og:title', content: guide.title },
         { property: 'og:description', content: guide.description },
+        { property: 'og:url', content: canonical },
         { property: 'og:type', content: 'article' },
       ],
-      links: [{ rel: 'canonical', href: canonical }],
+      links,
     };
   },
   component: LineGuidePage,

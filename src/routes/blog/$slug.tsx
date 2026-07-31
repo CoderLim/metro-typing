@@ -3,9 +3,10 @@ import { MDXProvider } from '@mdx-js/react';
 import { ArrowLeft, Calendar } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
+import { localeSeoLinks } from '@/core/i18n/seo';
 import { envConfigs } from '@/config';
 import { m } from '@/paraglide/messages.js';
-import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
+import { getLocale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { Header } from '@/blocks/header';
 import { MarkdownContent } from '@/components/markdown-content';
@@ -25,15 +26,14 @@ export const Route = createFileRoute('/blog/$slug')({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { locale, post } = loaderData;
-    const canonical = localizeUrl(`${envConfigs.app_url}/blog/${post.slug}`, {
-      locale: locale as any,
-    }).href;
+    const { canonical, links } = localeSeoLinks(`/blog/${post.slug}`, locale);
     return {
       meta: [
         { title: `${post.title} | ${envConfigs.app_name}` },
         { name: 'description', content: post.description },
+        { property: 'og:url', content: canonical },
       ],
-      links: [{ rel: 'canonical', href: canonical }],
+      links,
     };
   },
   component: BlogPostPage,

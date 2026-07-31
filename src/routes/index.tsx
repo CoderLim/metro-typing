@@ -1,13 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { localeSeoLinks } from '@/core/i18n/seo';
 import { envConfigs } from '@/config';
 import { m } from '@/paraglide/messages.js';
-import {
-  getLocale,
-  locales,
-  localizeUrl,
-  type Locale,
-} from '@/paraglide/runtime.js';
+import { getLocale, type Locale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
@@ -42,9 +38,8 @@ export const Route = createFileRoute('/')({
   },
   head: ({ loaderData }) => {
     const locale = (loaderData?.locale ?? 'ko') as Locale;
-    const appUrl = envConfigs.app_url;
-    const canonical = localizeUrl(`${appUrl}/`, { locale }).href;
-    const ogImage = `${appUrl}/imgs/screenshots/playing.png`;
+    const { canonical, links } = localeSeoLinks('/', locale);
+    const ogImage = `${envConfigs.app_url}/imgs/screenshots/playing.png`;
     return {
       meta: [
         { title: loaderData?.title ?? envConfigs.app_name },
@@ -73,19 +68,7 @@ export const Route = createFileRoute('/')({
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:image', content: ogImage },
       ],
-      links: [
-        { rel: 'canonical', href: canonical },
-        ...locales.map((loc) => ({
-          rel: 'alternate',
-          hrefLang: loc,
-          href: localizeUrl(`${appUrl}/`, { locale: loc }).href,
-        })),
-        {
-          rel: 'alternate',
-          hrefLang: 'x-default',
-          href: localizeUrl(`${appUrl}/`, { locale: 'ko' }).href,
-        },
-      ],
+      links,
     };
   },
   component: HomePage,

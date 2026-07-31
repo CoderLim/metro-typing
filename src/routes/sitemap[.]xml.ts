@@ -1,12 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { envConfigs } from '@/config';
-import {
-  LINE_GUIDE_SLUGS,
-  PRACTICE_GUIDE_SLUGS,
-} from '@/content/seo-guides';
 import { baseLocale, locales, localizeUrl } from '@/paraglide/runtime.js';
 import { getLocalPosts, mergePosts } from '@/content/posts';
+import { LINE_GUIDE_SLUGS, PRACTICE_GUIDE_SLUGS } from '@/content/seo-guides';
 
 const STATIC_PATHS = [
   '',
@@ -40,12 +37,13 @@ function urlFor(path: string, locale: string): string {
 }
 
 function entryXml(e: Entry): string {
-  const alternates = locales
-    .map(
+  const alternates = [
+    ...locales.map(
       (loc) =>
         `    <xhtml:link rel="alternate" hreflang="${loc}" href="${urlFor(e.path, loc)}"/>`
-    )
-    .join('\n');
+    ),
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${urlFor(e.path, baseLocale)}"/>`,
+  ].join('\n');
   return [
     '  <url>',
     `    <loc>${urlFor(e.path, baseLocale)}</loc>`,
