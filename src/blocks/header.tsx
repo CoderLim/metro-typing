@@ -1,11 +1,20 @@
-import { Link } from '@/core/i18n/navigation';
+import { Link, usePathname } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { cn } from '@/lib/utils';
 import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
 import { LocaleSelector } from '@/components/locale-selector';
 
+function isNavActive(pathname: string, href: string) {
+  if (href === '/#play') return pathname === '/';
+  if (href === '/supported-lines') {
+    return pathname === '/supported-lines' || pathname.startsWith('/lines/');
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function Header() {
+  const pathname = usePathname();
   const navLinks = [
     { href: '/#play', label: m['landing.nav.play']() },
     { href: '/how-to-play', label: m['landing.nav.howto'](), route: true },
@@ -26,7 +35,11 @@ export function Header() {
   return (
     <header className="border-border bg-background/90 sticky top-0 z-40 w-full border-b backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2" aria-label={envConfigs.app_name}>
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+          aria-label={envConfigs.app_name}
+        >
           <img
             src="/logo.png"
             alt="Metro Typing"
@@ -44,53 +57,67 @@ export function Header() {
           data-nosnippet
           className="hidden items-center gap-5 md:flex"
         >
-          {navLinks.map((link) =>
-            link.external ? (
+          {navLinks.map((link) => {
+            const active = !link.external && isNavActive(pathname, link.href);
+            const className = cn(
+              'text-sm transition-colors',
+              active
+                ? 'text-foreground font-medium'
+                : 'text-muted-foreground hover:text-foreground'
+            );
+
+            if (link.external) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(link.featured ? 'nav-cta-739' : className)}
+                >
+                  {link.featured ? (
+                    <img
+                      src="/imgs/73-9-logo.png"
+                      alt=""
+                      className="nav-cta-739-logo"
+                      width={18}
+                      height={18}
+                    />
+                  ) : null}
+                  {link.label}
+                  {link.featured ? (
+                    <span className="nav-cta-739-badge">
+                      {m['landing.nav.game_739_badge']()}
+                    </span>
+                  ) : null}
+                </a>
+              );
+            }
+
+            if (link.route) {
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={className}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              );
+            }
+
+            return (
               <a
                 key={link.href}
                 href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  link.featured
-                    ? 'nav-cta-739'
-                    : 'text-muted-foreground hover:text-foreground text-sm transition-colors'
-                )}
-              >
-                {link.featured ? (
-                  <img
-                    src="/imgs/73-9-logo.png"
-                    alt=""
-                    className="nav-cta-739-logo"
-                    width={18}
-                    height={18}
-                  />
-                ) : null}
-                {link.label}
-                {link.featured ? (
-                  <span className="nav-cta-739-badge">
-                    {m['landing.nav.game_739_badge']()}
-                  </span>
-                ) : null}
-              </a>
-            ) : link.route ? (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                className={className}
+                aria-current={active ? 'page' : undefined}
               >
                 {link.label}
               </a>
-            )
-          )}
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">

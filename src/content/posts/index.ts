@@ -12,6 +12,7 @@ import { baseLocale } from '@/paraglide/runtime.js';
  * local posts via the pure helpers below.
  */
 export const BLOG_POST_SLUGS = [
+  'china-metro-typing',
   'beginner-first-line',
   'route-quiz-guide',
   'hangul-vs-english-input',
@@ -109,10 +110,17 @@ export function mergePosts(
   return options.limit ? merged.slice(0, options.limit) : merged;
 }
 
+const DATE_LOCALE: Record<string, string> = {
+  ko: 'ko-KR',
+  en: 'en-US',
+  zh: 'zh-CN',
+};
+
 export function formatPostDate(dateIso: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
+  const dateLocale = DATE_LOCALE[locale] ?? 'en-US';
+  return new Intl.DateTimeFormat(dateLocale, {
     year: 'numeric',
-    month: locale === 'zh' ? 'long' : 'short',
+    month: locale === 'en' ? 'short' : 'long',
     day: 'numeric',
   }).format(new Date(dateIso));
 }

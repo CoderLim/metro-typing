@@ -4,23 +4,30 @@ import { localeSeoLinks } from '@/core/i18n/seo';
 import { envConfigs } from '@/config';
 import { m } from '@/paraglide/messages.js';
 import { getLocale, type Locale } from '@/paraglide/runtime.js';
+import { Blog } from '@/blocks/blog';
 import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
 import { SeoContent } from '@/blocks/seo-content';
+import { getBlogPostsFn } from '@/content/posts/server';
 
 const OG_LOCALE: Record<string, string> = {
   ko: 'ko_KR',
   en: 'en_US',
 };
 
+const HOME_BLOG_LIMIT = 3;
+
 function HomePage() {
+  const { posts } = Route.useLoaderData();
+
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
       <GameEmbed />
       <main>
         <SeoContent />
+        <Blog posts={posts} />
       </main>
       <Footer />
     </div>
@@ -28,10 +35,14 @@ function HomePage() {
 }
 
 export const Route = createFileRoute('/')({
-  loader: () => {
+  loader: async () => {
     const locale = getLocale();
+    const posts = await getBlogPostsFn({
+      data: { locale, limit: HOME_BLOG_LIMIT },
+    });
     return {
       locale,
+      posts,
       title: m['common.metadata.title']({}, { locale }),
       description: m['common.metadata.description']({}, { locale }),
     };

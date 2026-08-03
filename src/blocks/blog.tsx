@@ -15,7 +15,7 @@ export function Blog({ posts }: { posts: BlogPost[] }) {
   if (posts.length === 0) return null;
 
   return (
-    <section id="blog" className="px-4 py-24 sm:py-32">
+    <section id="blog" className="border-border border-t px-4 py-16 sm:py-24">
       <div className="mx-auto max-w-5xl">
         <div className="mb-20 text-center">
           <h2 className="font-serif text-4xl font-normal tracking-tight sm:text-5xl">
