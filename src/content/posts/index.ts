@@ -58,6 +58,18 @@ const postModules = import.meta.glob<PostModule>('/src/content/posts/*.mdx', {
   eager: true,
 });
 
+// Every registered editorial article must ship in every public locale. This
+// runs during the production build as well, so incomplete translations cannot
+// be deployed or silently replaced with another language.
+for (const slug of BLOG_POST_SLUGS) {
+  for (const locale of BLOG_POST_LOCALES) {
+    const modulePath = `/src/content/posts/${slug}.${locale}.mdx`;
+    if (!postModules[modulePath]) {
+      throw new Error(`[blog] Missing localized article: ${modulePath}`);
+    }
+  }
+}
+
 /**
  * Load only the requested language. A translated blog must never silently
  * render Korean or English content under a /zh or /ja canonical URL.
