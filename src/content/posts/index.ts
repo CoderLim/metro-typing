@@ -1,10 +1,8 @@
 import type { ComponentType } from 'react';
 
-import { baseLocale } from '@/paraglide/runtime.js';
-
 /**
  * Local blog posts written as MDX files in this directory.
- * File naming: `<slug>.<locale>.mdx` (falls back to the base locale).
+ * File naming: `<slug>.<locale>.mdx`.
  * Register every local post slug here — it drives loading and the sitemap.
  *
  * This module is isomorphic (safe in client bundles). Database posts are
@@ -20,6 +18,8 @@ export const BLOG_POST_SLUGS = [
   'hangul-typing-rhythm',
   'seoul-subway-line-memory',
 ] as const;
+
+export const BLOG_POST_LOCALES = ['ko', 'en', 'zh', 'ja'] as const;
 
 export type BlogPostMeta = {
   title: string;
@@ -58,15 +58,28 @@ const postModules = import.meta.glob<PostModule>('/src/content/posts/*.mdx', {
   eager: true,
 });
 
+// Every registered editorial article must ship in every public locale. This
+// runs during the production build as well, so incomplete translations cannot
+// be deployed or silently replaced with another language.
+for (const slug of BLOG_POST_SLUGS) {
+  for (const locale of BLOG_POST_LOCALES) {
+    const modulePath = `/src/content/posts/${slug}.${locale}.mdx`;
+    if (!postModules[modulePath]) {
+      throw new Error(`[blog] Missing localized article: ${modulePath}`);
+    }
+  }
+}
+
+/**
+ * Load only the requested language. A translated blog must never silently
+ * render Korean or English content under a /zh or /ja canonical URL.
+ */
 export function loadLocalPost(slug: string, locale: string): PostModule | null {
   if (!BLOG_POST_SLUGS.includes(slug as (typeof BLOG_POST_SLUGS)[number])) {
     return null;
   }
-  return (
-    postModules[`/src/content/posts/${slug}.${locale}.mdx`] ??
-    postModules[`/src/content/posts/${slug}.${baseLocale}.mdx`] ??
-    null
-  );
+
+  return postModules[`/src/content/posts/${slug}.${locale}.mdx`] ?? null;
 }
 
 function localPostToItem(slug: string, meta: BlogPostMeta): BlogPost {
@@ -114,6 +127,7 @@ const DATE_LOCALE: Record<string, string> = {
   ko: 'ko-KR',
   en: 'en-US',
   zh: 'zh-CN',
+  ja: 'ja-JP',
 };
 
 export function formatPostDate(dateIso: string, locale: string): string {
