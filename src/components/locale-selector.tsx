@@ -10,6 +10,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+const switchLanguageLabels: Record<string, string> = {
+  ko: '언어 변경',
+  en: 'Switch language',
+  zh: '切换语言',
+  ja: '言語を切り替える',
+};
+
 export function LocaleSelector({
   variant = 'icon',
   className,
@@ -38,7 +45,9 @@ export function LocaleSelector({
         {variant === 'icon' ? (
           <>
             <Languages className="size-4" />
-            <span className="sr-only">Switch language</span>
+            <span className="sr-only">
+              {switchLanguageLabels[locale] || switchLanguageLabels.en}
+            </span>
           </>
         ) : (
           <>

@@ -15,6 +15,13 @@ export interface FooterColumn {
 /** Off-site URLs render as plain <a>; internal paths use the locale-aware Link. */
 const isExternalHref = (href: string) => /^https?:\/\//.test(href);
 
+const footerNavLabels: Record<string, string> = {
+  ko: '바닥글 탐색',
+  en: 'Footer navigation',
+  zh: '页脚导航',
+  ja: 'フッターナビゲーション',
+};
+
 export interface FooterSocial {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
   href: string;
@@ -36,7 +43,7 @@ export function SiteFooter({
 }) {
   const year = new Date().getFullYear();
   const locale = getLocale();
-  const footerNavLabel = locale === 'ko' ? '바닥글 탐색' : 'Footer navigation';
+  const footerNavLabel = footerNavLabels[locale] || footerNavLabels.en;
 
   return (
     <footer className="bg-neutral-950 text-neutral-100">

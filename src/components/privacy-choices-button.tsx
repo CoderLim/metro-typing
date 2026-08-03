@@ -17,6 +17,7 @@ const labels: Record<string, string> = {
   ko: '개인정보 및 쿠키 설정',
   en: 'Privacy & cookie settings',
   zh: '隐私与 Cookie 设置',
+  ja: 'プライバシーと Cookie の設定',
 };
 
 export function PrivacyChoicesButton() {
