@@ -42,7 +42,7 @@
 - **SEO 内容** — 玩法、FAQ、线路攻略、训练专题与博客
 - **信任与隐私** — 关于、联系、隐私政策、服务条款和 Cookie 设置入口
 
-中文和日文翻译维护在 `messages/overrides/`。运行 `pnpm i18n:generate` 会以完整的 `messages/en.json` 为基准生成 `messages/zh.json` 和 `messages/ja.json`，并校验 key、顺序与 `{placeholder}`，避免语言文件截断或漏字段。
+中文和日文均使用直接提交的完整语言文件：`messages/zh.json` 与 `messages/ja.json`。两份文件均与英文基准保持 899 个 key 和一致的 `{placeholder}`。
 
 ## AdSense 合规
 

@@ -74,21 +74,25 @@ export default defineConfig({
       cookieName: 'PARAGLIDE_LOCALE',
       strategy: ['url', 'cookie', 'baseLocale'],
       urlPatterns: [
-        // API stays unprefixed for both locales.
+        // API stays unprefixed for every locale.
         {
           pattern: '/api/:path(.*)?',
           localized: [
             ['ko', '/api/:path(.*)?'],
             ['en', '/api/:path(.*)?'],
+            ['zh', '/api/:path(.*)?'],
+            ['ja', '/api/:path(.*)?'],
           ],
         },
-        // baseLocale (ko) has no prefix; English lives under /en.
+        // baseLocale (ko) has no prefix; other locales use URL prefixes.
         // Prefixed locales MUST come before the unprefixed ko wildcard,
-        // otherwise /en/* is swallowed as a Korean path and 404s.
+        // otherwise localized paths are swallowed as Korean paths and 404.
         {
           pattern: '/',
           localized: [
             ['en', '/en'],
+            ['zh', '/zh'],
+            ['ja', '/ja'],
             ['ko', '/'],
           ],
         },
@@ -96,6 +100,8 @@ export default defineConfig({
           pattern: '/:path(.*)?',
           localized: [
             ['en', '/en/:path(.*)?'],
+            ['zh', '/zh/:path(.*)?'],
+            ['ja', '/ja/:path(.*)?'],
             ['ko', '/:path(.*)?'],
           ],
         },
