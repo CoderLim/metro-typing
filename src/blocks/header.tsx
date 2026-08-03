@@ -5,6 +5,13 @@ import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
 import { LocaleSelector } from '@/components/locale-selector';
 
+const navLabels: Record<string, string> = {
+  ko: '주요 탐색',
+  en: 'Primary navigation',
+  zh: '主要导航',
+  ja: 'メインナビゲーション',
+};
+
 function isNavActive(pathname: string, href: string) {
   if (href === '/#play') return pathname === '/';
   if (href === '/supported-lines') {
@@ -30,7 +37,8 @@ export function Header() {
       featured: true,
     },
   ];
-  const navLabel = getLocale() === 'ko' ? '주요 탐색' : 'Primary navigation';
+  const locale = getLocale();
+  const navLabel = navLabels[locale] || navLabels.en;
 
   return (
     <header className="border-border bg-background/90 sticky top-0 z-40 w-full border-b backdrop-blur-sm">
