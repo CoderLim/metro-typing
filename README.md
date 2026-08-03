@@ -38,9 +38,11 @@
 - **即开即玩** — 浏览器内嵌游戏，无需安装
 - **真实线路** — 按首尔地铁等实际站序打字推进
 - **成绩反馈** — 完赛时间、打字速度、准确率
-- **多语言** — 韩语 / 英语 / 中文内容（Paraglide JS，实际启用语言以配置为准）
+- **多语言** — 韩语 / 英语 / 简体中文 / 日语（Paraglide JS）
 - **SEO 内容** — 玩法、FAQ、线路攻略、训练专题与博客
 - **信任与隐私** — 关于、联系、隐私政策、服务条款和 Cookie 设置入口
+
+中文和日文翻译维护在 `messages/overrides/`。运行 `pnpm i18n:generate` 会以完整的 `messages/en.json` 为基准生成 `messages/zh.json` 和 `messages/ja.json`，并校验 key、顺序与 `{placeholder}`，避免语言文件截断或漏字段。
 
 ## AdSense 合规
 
@@ -64,13 +66,14 @@ pnpm dev
 
 ## 常用命令
 
-| 命令             | 说明                            |
-| ---------------- | ------------------------------- |
-| `pnpm dev`       | 开发服务器（端口 3000）         |
-| `pnpm build`     | 生产构建                        |
-| `pnpm cf:deploy` | 构建并部署到 Cloudflare Workers |
-| `pnpm db:push`   | 同步数据库 schema（开发）       |
-| `pnpm db:studio` | Drizzle Studio                  |
+| 命令                  | 说明                            |
+| --------------------- | ------------------------------- |
+| `pnpm dev`            | 开发服务器（端口 3000）         |
+| `pnpm build`          | 生产构建                        |
+| `pnpm i18n:generate`  | 生成并校验中文、日文语言文件    |
+| `pnpm cf:deploy`      | 构建并部署到 Cloudflare Workers |
+| `pnpm db:push`        | 同步数据库 schema（开发）       |
+| `pnpm db:studio`      | Drizzle Studio                  |
 
 ## 技术栈
 
