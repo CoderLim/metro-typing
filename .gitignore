@@ -17,10 +17,6 @@
 src/routeTree.gen.ts
 src/paraglide/
 
-# generated locale catalogs (source translations live in messages/overrides/)
-/messages/zh.json
-/messages/ja.json
-
 # cloudflare — wrangler.jsonc is your working copy (real D1 id, URLs);
 # the committed template is wrangler.example.jsonc
 /.wrangler/
