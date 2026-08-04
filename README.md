@@ -46,7 +46,7 @@
 
 ## AdSense 合规
 
-仓库内已包含 Cookie/第三方广告披露、Google Privacy & Messaging 接入代码、隐私选择入口和内容扩充页面。Google 认证 CMP 仍需在 AdSense 后台创建并发布 European regulations 消息。
+仓库内已包含 Cookie/第三方广告披露、Google Privacy & Messaging 接入代码、隐私选择入口、法律页 `pauseAdRequests`、首页 `#play` 排除区标记，以及内容扩充页面。Google 认证 CMP、后台页面排除与站点状态仍需在 AdSense 后台完成。
 
 部署和复审前请完成：[AdSense 隐私、CMP 与内容检查清单](docs/adsense-compliance.md)。
 
@@ -66,14 +66,14 @@ pnpm dev
 
 ## 常用命令
 
-| 命令                  | 说明                            |
-| --------------------- | ------------------------------- |
-| `pnpm dev`            | 开发服务器（端口 3000）         |
-| `pnpm build`          | 生产构建                        |
-| `pnpm i18n:generate`  | 生成并校验中文、日文语言文件    |
-| `pnpm cf:deploy`      | 构建并部署到 Cloudflare Workers |
-| `pnpm db:push`        | 同步数据库 schema（开发）       |
-| `pnpm db:studio`      | Drizzle Studio                  |
+| 命令                 | 说明                            |
+| -------------------- | ------------------------------- |
+| `pnpm dev`           | 开发服务器（端口 3000）         |
+| `pnpm build`         | 生产构建                        |
+| `pnpm i18n:generate` | 生成并校验中文、日文语言文件    |
+| `pnpm cf:deploy`     | 构建并部署到 Cloudflare Workers |
+| `pnpm db:push`       | 同步数据库 schema（开发）       |
+| `pnpm db:studio`     | Drizzle Studio                  |
 
 ## 技术栈
 

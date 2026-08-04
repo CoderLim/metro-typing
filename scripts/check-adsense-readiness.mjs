@@ -13,27 +13,51 @@ function exists(file) {
 
 const checks = [
   {
-    name: 'AdSense loader is not injected from the root shell',
-    pass: () => !read('src/routes/__root.tsx').includes('<Ads code='),
-  },
-  {
-    name: 'Root shell keeps AdSense account verification meta without sitewide loader',
+    name: 'Root shell injects AdSense account meta and sitewide loader',
     pass: () =>
       read('src/routes/__root.tsx').includes('AdsAccountMeta') &&
-      read('src/routes/__root.tsx').includes('AdsLoader') &&
-      read('src/routes/__root.tsx').includes('isAdContentPage'),
+      read('src/routes/__root.tsx').includes('AdsLoader'),
   },
   {
-    name: 'AdSense loader is limited to blog article detail pages',
+    name: 'Legal/contact paths pause Auto ad requests in code',
+    pass: () => {
+      const ads = read('src/components/analytics/ads.tsx');
+      return (
+        ads.includes('AD_REQUEST_PAUSED_PATHS') &&
+        ads.includes('/privacy-policy') &&
+        ads.includes('/terms-of-service') &&
+        ads.includes('/contact') &&
+        ads.includes('pauseAdRequests') &&
+        exists('public/adsense-pause-requests.js')
+      );
+    },
+  },
+  {
+    name: 'Homepage game frame keeps #play for AdSense excluded areas',
     pass: () =>
-      read('src/routes/__root.tsx').includes('blog\\/[^/]+') &&
-      !read('src/routes/__root.tsx').includes('blog(?:\\/|$)'),
+      read('src/blocks/game-embed.tsx').includes('id="play"') &&
+      read('src/components/analytics/ads.tsx').includes('#play'),
   },
   {
     name: 'About and contact routes exist',
     pass: () =>
       exists('src/routes/(pages)/about.tsx') &&
       exists('src/routes/(pages)/contact.tsx'),
+  },
+  {
+    name: 'About page discloses publisher domain and contact email',
+    pass: () => {
+      const about = [
+        read('src/content/pages/about.en.mdx'),
+        read('src/content/pages/about.ko.mdx'),
+        read('src/content/pages/about.zh.mdx'),
+      ].join('\n');
+      return (
+        about.includes('metrotyping.org') &&
+        about.includes('contact@metrotyping.org') &&
+        about.includes('73-9.org')
+      );
+    },
   },
   {
     name: 'Sitemap lists public trust pages',
@@ -74,6 +98,18 @@ const checks = [
         posts.includes('hangul-typing-rhythm') &&
         !posts.includes('ShipAny') &&
         !posts.includes('headless SaaS')
+      );
+    },
+  },
+  {
+    name: 'Compliance doc lists CMP, page exclusions, and #play area exclusion',
+    pass: () => {
+      const doc = read('docs/adsense-compliance.md');
+      return (
+        doc.includes('European regulations') &&
+        doc.includes('Page exclusions') &&
+        doc.includes('#play') &&
+        doc.includes('pauseAdRequests')
       );
     },
   },
