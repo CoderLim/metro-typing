@@ -3,9 +3,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { filterPublicConfigs, getAllConfigs } from '@/modules/config/service';
 import { respData } from '@/lib/resp';
 
-const noStore = {
+const cachePolicy = {
   headers: {
-    'Cache-Control': 'no-store, no-cache, must-revalidate',
+    'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
   },
 };
 
@@ -55,7 +55,7 @@ async function GET({ request }: { request: Request }) {
     configs.email_verification_enabled === 'true' && emailConfigured
       ? 'true'
       : 'false';
-  return respData(result, noStore);
+  return respData(result, cachePolicy);
 }
 
 export const Route = createFileRoute('/api/config/public')({

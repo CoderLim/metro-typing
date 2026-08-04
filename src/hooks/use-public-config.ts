@@ -4,14 +4,17 @@ import { apiGet } from '@/lib/api-client';
 
 export type PublicConfig = Record<string, string>;
 
-// Public runtime config (auth methods, social login ids, …) — shared by
-// sign-in/sign-up/forgot-password/google-one-tap. Deduped and
-// cached by react-query.
+const PUBLIC_CONFIG_STALE_TIME = 5 * 60 * 1000;
+const PUBLIC_CONFIG_GC_TIME = 60 * 60 * 1000;
+
+// Public runtime config changes infrequently. Share one request across the
+// app and keep it fresh long enough that every route does not refetch it.
 export function usePublicConfig() {
   return useQuery({
     queryKey: ['public-config'],
-    queryFn: () =>
-      apiGet<PublicConfig>('/api/config/public', { cache: 'no-store' }),
-    staleTime: 0,
+    queryFn: () => apiGet<PublicConfig>('/api/config/public'),
+    staleTime: PUBLIC_CONFIG_STALE_TIME,
+    gcTime: PUBLIC_CONFIG_GC_TIME,
+    refetchOnWindowFocus: false,
   });
 }

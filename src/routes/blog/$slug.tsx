@@ -14,6 +14,15 @@ import { mdxComponents } from '@/components/mdx-components';
 import { formatPostDate, loadLocalPost } from '@/content/posts';
 import { getBlogPostFn } from '@/content/posts/server';
 
+function absoluteUrl(value?: string): string | undefined {
+  if (!value) return undefined;
+  try {
+    return new URL(value, envConfigs.app_url).href;
+  } catch {
+    return undefined;
+  }
+}
+
 export const Route = createFileRoute('/blog/$slug')({
   loader: async ({ params }) => {
     const locale = getLocale();
@@ -27,13 +36,94 @@ export const Route = createFileRoute('/blog/$slug')({
     if (!loaderData) return {};
     const { locale, post } = loaderData;
     const { canonical, links } = localeSeoLinks(`/blog/${post.slug}`, locale);
+    const title = `${post.title} | ${envConfigs.app_name}`;
+    const image = absoluteUrl(post.image);
+    const authorName = post.authorName || envConfigs.app_name;
+    const structuredData = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        ...(image ? { image: [image] } : {}),
+        datePublished: post.createdAt,
+        author: {
+          '@type': 'Person',
+          name: authorName,
+          ...(post.authorImage
+            ? { image: absoluteUrl(post.authorImage) }
+            : {}),
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: envConfigs.app_name,
+          logo: {
+            '@type': 'ImageObject',
+            url: `${envConfigs.app_url}/logo.png`,
+          },
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': canonical,
+        },
+        inLanguage: locale,
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: envConfigs.app_name,
+            item: envConfigs.app_url,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: m['landing.blog.title']({}, { locale }),
+            item: new URL('/blog', envConfigs.app_url).href,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.title,
+            item: canonical,
+          },
+        ],
+      },
+    ];
+
     return {
       meta: [
-        { title: `${post.title} | ${envConfigs.app_name}` },
+        { title },
         { name: 'description', content: post.description },
+        { name: 'robots', content: 'index, follow' },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: post.description },
         { property: 'og:url', content: canonical },
+        { property: 'og:type', content: 'article' },
+        { property: 'article:published_time', content: post.createdAt },
+        ...(image
+          ? [
+              { property: 'og:image', content: image },
+              { property: 'og:image:width', content: '1200' },
+              { property: 'og:image:height', content: '630' },
+              { property: 'og:image:alt', content: post.title },
+            ]
+          : []),
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: title },
+        { name: 'twitter:description', content: post.description },
+        ...(image ? [{ name: 'twitter:image', content: image }] : []),
       ],
       links,
+      scripts: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(structuredData).replace(/</g, '\\u003c'),
+        },
+      ],
     };
   },
   component: BlogPostPage,
@@ -80,6 +170,8 @@ function BlogPostPage() {
                       alt={post.authorName || ''}
                       width={20}
                       height={20}
+                      loading="lazy"
+                      decoding="async"
                       className="size-5 rounded-full object-cover"
                     />
                   )}
@@ -93,7 +185,13 @@ function BlogPostPage() {
             <img
               src={post.image}
               alt={post.title}
-              className="border-border mb-8 w-full rounded-2xl border object-cover"
+              width={1200}
+              height={630}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              sizes="(min-width: 768px) 768px, calc(100vw - 48px)"
+              className="border-border mb-8 aspect-[1200/630] w-full rounded-2xl border object-cover"
             />
           )}
 
