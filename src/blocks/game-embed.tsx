@@ -13,7 +13,7 @@ export function GameEmbed() {
   return (
     <section
       id="play"
-      className="relative h-[calc(100dvh-7rem)] min-h-[36rem] w-full overflow-hidden bg-neutral-950"
+      className="relative h-[calc(100dvh-3.5rem)] min-h-[36rem] w-full overflow-hidden bg-neutral-950"
       aria-label={m['landing.game.title']()}
     >
       <iframe
