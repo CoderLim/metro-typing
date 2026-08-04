@@ -4,7 +4,6 @@ import { Footer } from '@/blocks/footer';
 import { Header } from '@/blocks/header';
 import { JapanGameEmbed, JAPAN_GAME_URL } from '@/blocks/japan-game-embed';
 import { JapanSeoContent } from '@/blocks/japan-seo-content';
-import { CountryGameSelector } from '@/components/country-game-selector';
 import { envConfigs } from '@/config';
 import { getJapanMetroPageCopy } from '@/content/japan-metro-page';
 import { localeSeoLinks } from '@/core/i18n/seo';
@@ -91,7 +90,6 @@ function JapanMetroTypingPage() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
-      <CountryGameSelector active="japan" />
       <JapanGameEmbed />
       <main>
         <JapanSeoContent />
