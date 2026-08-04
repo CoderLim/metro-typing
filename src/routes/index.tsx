@@ -9,11 +9,14 @@ import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
 import { SeoContent } from '@/blocks/seo-content';
+import { CountryGameSelector } from '@/components/country-game-selector';
 import { getBlogPostsFn } from '@/content/posts/server';
 
 const OG_LOCALE: Record<string, string> = {
   ko: 'ko_KR',
   en: 'en_US',
+  zh: 'zh_CN',
+  ja: 'ja_JP',
 };
 
 const HOME_BLOG_LIMIT = 3;
@@ -24,6 +27,7 @@ function HomePage() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
+      <CountryGameSelector active="korea" />
       <GameEmbed />
       <main>
         <SeoContent />
