@@ -1,7 +1,7 @@
-import { Check, ChevronDown, MapPin } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 
-import { usePathname, useRouter } from '@/core/i18n/navigation';
-import { getLocale } from '@/paraglide/runtime.js';
+import { usePathname } from '@/core/i18n/navigation';
+import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,9 +52,8 @@ const COPY: Record<
 export function CountrySelector() {
   const locale = getLocale();
   const pathname = usePathname();
-  const router = useRouter();
   const copy = COPY[locale] ?? COPY.en;
-  const activeCountry = pathname.startsWith('/japan-metro-typing')
+  const activeCountry = pathname.includes('/japan-metro-typing')
     ? 'japan'
     : 'korea';
 
@@ -76,6 +75,11 @@ export function CountrySelector() {
   ];
   const active = countries.find((country) => country.id === activeCountry)!;
 
+  function handleCountryChange(href: string) {
+    const target = localizeUrl(href, { locale }).href;
+    window.location.assign(target);
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -83,17 +87,16 @@ export function CountrySelector() {
         aria-label={copy.switchCountry}
         className="text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-sm font-medium transition-colors outline-none"
       >
-        <MapPin className="hidden size-4 sm:block" aria-hidden="true" />
         <span aria-hidden="true">{active.flag}</span>
-        <span className="hidden xl:inline">{active.label}</span>
+        <span>{active.label}</span>
         <ChevronDown className="size-3.5 opacity-70" aria-hidden="true" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-44">
+      <DropdownMenuContent align="end" className="min-w-40">
         {countries.map((country) => (
           <DropdownMenuItem
             key={country.id}
             title={country.title}
-            onSelect={() => router.push(country.href)}
+            onClick={() => handleCountryChange(country.href)}
             className="flex cursor-pointer items-center gap-2"
           >
             <span aria-hidden="true">{country.flag}</span>
