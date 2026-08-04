@@ -9,6 +9,7 @@ import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
 import { SeoContent } from '@/blocks/seo-content';
+import { SupportedCountries } from '@/blocks/supported-countries';
 import { CountryGameSelector } from '@/components/country-game-selector';
 import { getBlogPostsFn } from '@/content/posts/server';
 
@@ -32,6 +33,7 @@ function HomePage() {
       <main>
         <SeoContent />
         <Blog posts={posts} />
+        <SupportedCountries />
       </main>
       <Footer />
     </div>
