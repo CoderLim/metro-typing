@@ -1,11 +1,10 @@
 import { Check, ChevronDown } from 'lucide-react';
 
 import { usePathname } from '@/core/i18n/navigation';
-import { getLocale, localizeUrl } from '@/paraglide/runtime.js';
+import { getLocale } from '@/paraglide/runtime.js';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
@@ -13,41 +12,36 @@ const COPY: Record<
   string,
   {
     switchCountry: string;
-    korea: string;
-    japan: string;
     koreaTitle: string;
     japanTitle: string;
   }
 > = {
   ko: {
     switchCountry: '플레이 국가 변경',
-    korea: '한국',
-    japan: '일본',
     koreaTitle: '한국 Metro Typing으로 이동',
     japanTitle: '일본 전철 타이핑으로 이동',
   },
   en: {
     switchCountry: 'Switch game country',
-    korea: 'Korea',
-    japan: 'Japan',
     koreaTitle: 'Open Korea Metro Typing',
     japanTitle: 'Open Japan Train Typing',
   },
   zh: {
     switchCountry: '切换游戏国家',
-    korea: '韩国',
-    japan: '日本',
     koreaTitle: '打开韩国 Metro Typing',
     japanTitle: '打开日本电车打字',
   },
   ja: {
     switchCountry: 'プレイする国を切り替える',
-    korea: '韓国',
-    japan: '日本',
     koreaTitle: '韓国のMetro Typingを開く',
     japanTitle: '日本の電車でタイピングを開く',
   },
 };
+
+function localizedCountryHref(locale: string, path: string) {
+  if (locale === 'ko') return path;
+  return path === '/' ? `/${locale}` : `/${locale}${path}`;
+}
 
 export function CountrySelector() {
   const locale = getLocale();
@@ -60,25 +54,20 @@ export function CountrySelector() {
   const countries = [
     {
       id: 'korea' as const,
-      href: '/',
+      href: localizedCountryHref(locale, '/'),
       flag: '🇰🇷',
-      label: copy.korea,
+      label: '한국',
       title: copy.koreaTitle,
     },
     {
       id: 'japan' as const,
-      href: '/japan-metro-typing',
+      href: localizedCountryHref(locale, '/japan-metro-typing'),
       flag: '🇯🇵',
-      label: copy.japan,
+      label: '日本',
       title: copy.japanTitle,
     },
   ];
   const active = countries.find((country) => country.id === activeCountry)!;
-
-  function handleCountryChange(href: string) {
-    const target = localizeUrl(href, { locale }).href;
-    window.location.assign(target);
-  }
 
   return (
     <DropdownMenu>
@@ -93,18 +82,20 @@ export function CountrySelector() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-40">
         {countries.map((country) => (
-          <DropdownMenuItem
+          <a
             key={country.id}
+            href={country.href}
             title={country.title}
-            onClick={() => handleCountryChange(country.href)}
-            className="flex cursor-pointer items-center gap-2"
+            role="menuitem"
+            aria-current={country.id === activeCountry ? 'page' : undefined}
+            className="focus:bg-accent focus:text-accent-foreground flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <span aria-hidden="true">{country.flag}</span>
             <span className="flex-1">{country.label}</span>
             {country.id === activeCountry ? (
               <Check className="size-3.5" aria-hidden="true" />
             ) : null}
-          </DropdownMenuItem>
+          </a>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
