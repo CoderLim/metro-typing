@@ -3,6 +3,7 @@ import { envConfigs } from '@/config';
 import { cn } from '@/lib/utils';
 import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
+import { CountrySelector } from '@/components/country-selector';
 import { LocaleSelector } from '@/components/locale-selector';
 
 const navLabels: Record<string, string> = {
@@ -128,7 +129,8 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <CountrySelector />
           <LocaleSelector />
         </div>
       </div>
