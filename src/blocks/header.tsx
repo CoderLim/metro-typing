@@ -31,12 +31,6 @@ export function Header() {
     { href: '/blog', label: m['landing.nav.blog'](), route: true },
     { href: '/about', label: m['landing.nav.about'](), route: true },
     { href: '/faq', label: m['landing.nav.faq'](), route: true },
-    {
-      href: 'https://73-9.org',
-      label: m['landing.nav.game_739'](),
-      external: true,
-      featured: true,
-    },
   ];
   const locale = getLocale();
   const navLabel = navLabels[locale] || navLabels.en;
@@ -67,41 +61,13 @@ export function Header() {
           className="hidden items-center gap-5 md:flex"
         >
           {navLinks.map((link) => {
-            const active = !link.external && isNavActive(pathname, link.href);
+            const active = isNavActive(pathname, link.href);
             const className = cn(
               'text-sm transition-colors',
               active
                 ? 'text-foreground font-medium'
                 : 'text-muted-foreground hover:text-foreground'
             );
-
-            if (link.external) {
-              return (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(link.featured ? 'nav-cta-739' : className)}
-                >
-                  {link.featured ? (
-                    <img
-                      src="/imgs/73-9-logo.png"
-                      alt=""
-                      className="nav-cta-739-logo"
-                      width={18}
-                      height={18}
-                    />
-                  ) : null}
-                  {link.label}
-                  {link.featured ? (
-                    <span className="nav-cta-739-badge">
-                      {m['landing.nav.game_739_badge']()}
-                    </span>
-                  ) : null}
-                </a>
-              );
-            }
 
             if (link.route) {
               return (

@@ -17,7 +17,7 @@ export function Footer() {
           href: 'https://chromewebstore.google.com/detail/metro-typing-launcher/amfhlibeegkheaikcojjlhihkpggfhbc',
         },
         {
-          label: m['landing.footer.game_739'](),
+          label: '73-9 game',
           href: 'https://73-9.org',
         },
       ],
