@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
@@ -29,48 +29,101 @@ import '@fontsource/libre-baskerville/700.css';
 import '@fontsource/libre-baskerville/400-italic.css';
 import '@/styles/globals.css';
 
-// Analytics IDs live in the DB config (1h-cached service). Fetched via a
-// server function so drizzle/db code never reaches the client bundle.
-const emptyAnalytics = {
-  gaId: '',
-  plausibleDomain: '',
-  plausibleSrc: '',
-  adsenseCode: '',
-  crispWebsiteId: '',
-  tawkPropertyId: '',
-  tawkWidgetId: '',
+const ANALYTICS_CONFIG_KEYS = [
+  'google_analytics_id',
+  'plausible_domain',
+  'plausible_src',
+  'adsense_code',
+  'crisp_enabled',
+  'crisp_website_id',
+  'tawk_enabled',
+  'tawk_property_id',
+  'tawk_widget_id',
+] as const;
+
+const INITIAL_ANALYTICS_TIMEOUT_MS = 75;
+
+type AnalyticsConfig = {
+  gaId: string;
+  plausibleDomain: string;
+  plausibleSrc: string;
+  adsenseCode: string;
+  crispWebsiteId: string;
+  tawkPropertyId: string;
+  tawkWidgetId: string;
 };
 
+function normalizeAnalytics(configs: Record<string, string>): AnalyticsConfig {
+  return {
+    gaId: configs.google_analytics_id?.trim() || '',
+    plausibleDomain: configs.plausible_domain?.trim() || '',
+    plausibleSrc: configs.plausible_src?.trim() || '',
+    adsenseCode: configs.adsense_code?.trim() || '',
+    crispWebsiteId:
+      configs.crisp_enabled === 'true'
+        ? configs.crisp_website_id?.trim() || ''
+        : '',
+    tawkPropertyId:
+      configs.tawk_enabled === 'true'
+        ? configs.tawk_property_id?.trim() || ''
+        : '',
+    tawkWidgetId:
+      configs.tawk_enabled === 'true'
+        ? configs.tawk_widget_id?.trim() || ''
+        : '',
+  };
+}
+
+const envAnalytics = normalizeAnalytics(
+  envConfigs as unknown as Record<string, string>
+);
+
+// Query only the runtime integration keys instead of SELECT * FROM config.
+// The initial root loader is time-bounded; a slower cold-start query finishes
+// after hydration and updates the integrations without delaying first paint.
 const getAnalyticsConfigs = createServerFn().handler(async () => {
+  const merged: Record<string, string> = {
+    ...(envConfigs as unknown as Record<string, string>),
+  };
+
   try {
-    const { getAllConfigs } = await import('@/modules/config/service');
-    const configs = await getAllConfigs();
-    return {
-      gaId: configs.google_analytics_id?.trim() || '',
-      plausibleDomain: configs.plausible_domain?.trim() || '',
-      plausibleSrc: configs.plausible_src?.trim() || '',
-      adsenseCode: configs.adsense_code?.trim() || '',
-      crispWebsiteId:
-        configs.crisp_enabled === 'true'
-          ? configs.crisp_website_id?.trim() || ''
-          : '',
-      tawkPropertyId:
-        configs.tawk_enabled === 'true'
-          ? configs.tawk_property_id?.trim() || ''
-          : '',
-      tawkWidgetId:
-        configs.tawk_enabled === 'true'
-          ? configs.tawk_widget_id?.trim() || ''
-          : '',
-    };
+    if (!envConfigs.database_url && envConfigs.database_provider !== 'd1') {
+      return envAnalytics;
+    }
+
+    const [{ inArray }, { db }, { config }] = await Promise.all([
+      import('drizzle-orm'),
+      import('@/core/db'),
+      import('@/config/db/schema'),
+    ]);
+    const rows = await db()
+      .select({ name: config.name, value: config.value })
+      .from(config)
+      .where(inArray(config.name, [...ANALYTICS_CONFIG_KEYS]));
+
+    for (const row of rows) {
+      if (row.name && row.value !== null && row.value !== undefined) {
+        merged[row.name] = row.value;
+      }
+    }
   } catch {
-    // No database configured — analytics/admin settings are optional.
-    return emptyAnalytics;
+    // Database-backed analytics are optional; environment values still work.
   }
+
+  return normalizeAnalytics(merged);
 });
 
+async function loadInitialAnalytics(): Promise<AnalyticsConfig> {
+  return Promise.race([
+    getAnalyticsConfigs(),
+    new Promise<AnalyticsConfig>((resolve) => {
+      setTimeout(() => resolve(envAnalytics), INITIAL_ANALYTICS_TIMEOUT_MS);
+    }),
+  ]);
+}
+
 export const Route = createRootRoute({
-  loader: () => getAnalyticsConfigs(),
+  loader: loadInitialAnalytics,
   head: () => {
     // Page-specific hreflang/canonical live on each route's head() via
     // localeSeoLinks() — do not emit homepage alternates here or every
@@ -101,10 +154,6 @@ export const Route = createRootRoute({
           href: '/apple-touch-icon.png',
           sizes: '180x180',
         },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap',
-        },
       ],
     };
   },
@@ -115,7 +164,24 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  const analytics = Route.useLoaderData();
+  const initialAnalytics = Route.useLoaderData() ?? envAnalytics;
+  const [analytics, setAnalytics] =
+    useState<AnalyticsConfig>(initialAnalytics);
+
+  useEffect(() => {
+    let active = true;
+    getAnalyticsConfigs()
+      .then((next) => {
+        if (active) setAnalytics(next);
+      })
+      .catch(() => {
+        // Environment values from the initial render remain active.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={getQueryClient()}>
@@ -129,25 +195,25 @@ function RootComponent() {
         <SandboxPreviewBridge />
         <Toaster position="top-center" richColors />
         <GoogleOneTap />
-        {analytics?.adsenseCode ? (
+        {analytics.adsenseCode ? (
           <>
             <AdsAccountMeta code={analytics.adsenseCode} />
             <AdsLoader code={analytics.adsenseCode} />
           </>
         ) : null}
-        {analytics?.gaId ? (
+        {analytics.gaId ? (
           <GoogleAnalytics measurementId={analytics.gaId} />
         ) : null}
-        {analytics?.plausibleDomain || analytics?.plausibleSrc ? (
+        {analytics.plausibleDomain || analytics.plausibleSrc ? (
           <Plausible
             domain={analytics.plausibleDomain}
             src={analytics.plausibleSrc || undefined}
           />
         ) : null}
         <CustomerService
-          crispWebsiteId={analytics?.crispWebsiteId || undefined}
-          tawkPropertyId={analytics?.tawkPropertyId || undefined}
-          tawkWidgetId={analytics?.tawkWidgetId || undefined}
+          crispWebsiteId={analytics.crispWebsiteId || undefined}
+          tawkPropertyId={analytics.tawkPropertyId || undefined}
+          tawkWidgetId={analytics.tawkWidgetId || undefined}
         />
       </ThemeProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
