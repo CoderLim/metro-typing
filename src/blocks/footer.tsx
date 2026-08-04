@@ -1,8 +1,42 @@
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 import { PrivacyChoicesButton } from '@/components/privacy-choices-button';
 import { SiteFooter, type FooterColumn } from '@/components/site-footer';
 
+const COUNTRY_COPY: Record<
+  string,
+  {
+    title: string;
+    korea: string;
+    japan: string;
+  }
+> = {
+  ko: {
+    title: '지원 국가',
+    korea: '🇰🇷 한국 Metro Typing',
+    japan: '🇯🇵 일본 전철 타이핑',
+  },
+  en: {
+    title: 'Supported Countries',
+    korea: '🇰🇷 Korea Metro Typing',
+    japan: '🇯🇵 Japan Train Typing',
+  },
+  zh: {
+    title: '支持的国家',
+    korea: '🇰🇷 韩国 Metro Typing',
+    japan: '🇯🇵 日本电车打字',
+  },
+  ja: {
+    title: '対応している国',
+    korea: '🇰🇷 韓国 Metro Typing',
+    japan: '🇯🇵 日本の電車でタイピング',
+  },
+};
+
 export function Footer() {
+  const locale = getLocale();
+  const countryCopy = COUNTRY_COPY[locale] ?? COUNTRY_COPY.en;
+
   const columns: FooterColumn[] = [
     {
       title: m['landing.footer.explore'](),
@@ -29,6 +63,13 @@ export function Footer() {
         { label: m['landing.footer.contact'](), href: '/contact' },
         { label: m['landing.footer.privacy'](), href: '/privacy-policy' },
         { label: m['landing.footer.terms'](), href: '/terms-of-service' },
+      ],
+    },
+    {
+      title: countryCopy.title,
+      links: [
+        { label: countryCopy.korea, href: '/' },
+        { label: countryCopy.japan, href: '/japan-metro-typing' },
       ],
     },
   ];
