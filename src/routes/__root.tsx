@@ -42,6 +42,7 @@ const ANALYTICS_CONFIG_KEYS = [
 ] as const;
 
 const INITIAL_ANALYTICS_TIMEOUT_MS = 75;
+const ANALYTICS_CACHE_TTL_MS = 60 * 60 * 1000;
 
 type AnalyticsConfig = {
   gaId: string;
@@ -77,40 +78,52 @@ function normalizeAnalytics(configs: Record<string, string>): AnalyticsConfig {
 const envAnalytics = normalizeAnalytics(
   envConfigs as unknown as Record<string, string>
 );
+let cachedAnalytics: AnalyticsConfig | null = null;
+let cachedAnalyticsAt = 0;
 
 // Query only the runtime integration keys instead of SELECT * FROM config.
-// The initial root loader is time-bounded; a slower cold-start query finishes
-// after hydration and updates the integrations without delaying first paint.
+// Warm instances serve a one-hour in-memory cache. The initial root loader is
+// also time-bounded; a slower cold-start query finishes after hydration and
+// updates the integrations without delaying first paint.
 const getAnalyticsConfigs = createServerFn().handler(async () => {
+  const now = Date.now();
+  if (
+    cachedAnalytics &&
+    now - cachedAnalyticsAt < ANALYTICS_CACHE_TTL_MS
+  ) {
+    return cachedAnalytics;
+  }
+
   const merged: Record<string, string> = {
     ...(envConfigs as unknown as Record<string, string>),
   };
 
   try {
-    if (!envConfigs.database_url && envConfigs.database_provider !== 'd1') {
-      return envAnalytics;
-    }
+    if (envConfigs.database_url || envConfigs.database_provider === 'd1') {
+      const [{ inArray }, { db }, { config }] = await Promise.all([
+        import('drizzle-orm'),
+        import('@/core/db'),
+        import('@/config/db/schema'),
+      ]);
+      const rows = await db()
+        .select({ name: config.name, value: config.value })
+        .from(config)
+        .where(inArray(config.name, [...ANALYTICS_CONFIG_KEYS]));
 
-    const [{ inArray }, { db }, { config }] = await Promise.all([
-      import('drizzle-orm'),
-      import('@/core/db'),
-      import('@/config/db/schema'),
-    ]);
-    const rows = await db()
-      .select({ name: config.name, value: config.value })
-      .from(config)
-      .where(inArray(config.name, [...ANALYTICS_CONFIG_KEYS]));
-
-    for (const row of rows) {
-      if (row.name && row.value !== null && row.value !== undefined) {
-        merged[row.name] = row.value;
+      for (const row of rows) {
+        if (row.name && row.value !== null && row.value !== undefined) {
+          merged[row.name] = row.value;
+        }
       }
     }
   } catch {
     // Database-backed analytics are optional; environment values still work.
   }
 
-  return normalizeAnalytics(merged);
+  const next = normalizeAnalytics(merged);
+  cachedAnalytics = next;
+  cachedAnalyticsAt = now;
+  return next;
 });
 
 async function loadInitialAnalytics(): Promise<AnalyticsConfig> {
