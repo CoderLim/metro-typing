@@ -7,6 +7,7 @@ import { LINE_GUIDE_SLUGS, PRACTICE_GUIDE_SLUGS } from '@/content/seo-guides';
 
 const STATIC_PATHS = [
   '',
+  '/subway-map-typing',
   '/japan-metro-typing',
   '/blog',
   '/about',
@@ -65,10 +66,18 @@ export const Route = createFileRoute('/sitemap.xml')({
         const entries: Entry[] = STATIC_PATHS.map((path) => ({
           path,
           lastModified:
-            path === '/japan-metro-typing' ? '2026-08-04' : undefined,
+            path === '/subway-map-typing'
+              ? '2026-08-08'
+              : path === '/japan-metro-typing'
+                ? '2026-08-04'
+                : undefined,
           changeFrequency: path === '/blog' ? 'daily' : 'weekly',
           priority:
-            path === '' ? 1 : path === '/japan-metro-typing' ? 0.9 : 0.8,
+            path === ''
+              ? 1
+              : path === '/subway-map-typing' || path === '/japan-metro-typing'
+                ? 0.9
+                : 0.8,
         }));
 
         for (const path of GUIDE_PATHS) {
