@@ -1,5 +1,6 @@
 import { Link } from '@/core/i18n/navigation';
 import { m } from '@/paraglide/messages.js';
+import { getLocale } from '@/paraglide/runtime.js';
 
 function SeoImage({
   src,
@@ -43,6 +44,7 @@ function GuideLink({ href, children }: { href: string; children: string }) {
 }
 
 export function SeoContent() {
+  const locale = getLocale();
   const faqs = [
     { q: m['landing.seo.faq.q1'](), a: m['landing.seo.faq.a1']() },
     { q: m['landing.seo.faq.q2'](), a: m['landing.seo.faq.a2']() },
@@ -121,6 +123,19 @@ export function SeoContent() {
             <p>{m['landing.seo.lines.p2']()}</p>
             <p>{m['landing.seo.lines.p3']()}</p>
           </div>
+          {locale === 'ko' && (
+            <Link
+              href="/subway-map-typing"
+              className="border-border bg-muted/30 hover:bg-muted/50 mt-8 block rounded-xl border p-5 transition-colors"
+            >
+              <span className="text-foreground block text-lg font-semibold">
+                지하철 노선도 타이핑 게임 →
+              </span>
+              <span className="text-muted-foreground mt-2 block text-sm leading-relaxed sm:text-base">
+                1호선부터 9호선까지 역 이름을 입력하며 서울 지하철 노선도를 완주해 보세요.
+              </span>
+            </Link>
+          )}
           <GuideLink href="/supported-lines">
             {m['landing.seo.lines.read_more']()}
           </GuideLink>
