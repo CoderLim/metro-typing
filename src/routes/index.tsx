@@ -25,6 +25,10 @@ const OG_LOCALE: Record<string, string> = {
 };
 
 const HOME_BLOG_LIMIT = 3;
+const KO_HOME_TITLE =
+  '메트로 타이핑 · 메트로타이핑 - 서울 지하철 역 이름 타자 연습';
+const KO_HOME_DESCRIPTION =
+  '메트로 타이핑(메트로타이핑)은 지하철역 이름을 입력하며 노선을 완주하는 게임입니다. 서울 지하철 노선도 타이핑과 지하철 타자 연습을 브라우저에서 바로 즐기고 기록에 도전해 보세요.';
 
 function buildStructuredData(
   locale: Locale,
@@ -112,12 +116,20 @@ export const Route = createFileRoute('/')({
     const posts = mergePosts([], getLocalPostSummaries(locale), {
       limit: HOME_BLOG_LIMIT,
     });
+    const title =
+      locale === 'ko'
+        ? KO_HOME_TITLE
+        : m['common.metadata.title']({}, { locale });
+    const description =
+      locale === 'ko'
+        ? KO_HOME_DESCRIPTION
+        : m['common.metadata.description']({}, { locale });
 
     return {
       locale,
       posts,
-      title: m['common.metadata.title']({}, { locale }),
-      description: m['common.metadata.description']({}, { locale }),
+      title,
+      description,
     };
   },
   head: ({ loaderData }) => {
