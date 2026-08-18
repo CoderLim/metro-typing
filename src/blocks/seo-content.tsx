@@ -2,6 +2,7 @@ import { Link } from '@/core/i18n/navigation';
 import {
   KOREAN_HOME_FAQS,
   KOREAN_HOME_LINES,
+  KOREAN_HOME_MODES,
   KOREAN_HOME_RELATED,
   KOREAN_HOME_SOURCES,
 } from '@/content/home-seo.ko';
@@ -112,6 +113,35 @@ function KoreanSeoContent() {
       </section>
 
       <section
+        id="modes"
+        className="border-border scroll-mt-20 border-t px-4 py-14 sm:px-6 sm:py-16"
+      >
+        <div className="mx-auto max-w-4xl">
+          <h2 className="font-serif text-2xl tracking-tight sm:text-3xl">
+            메트로 타이핑에서 할 수 있는 플레이 모드
+          </h2>
+          <p className="text-muted-foreground mt-5 max-w-3xl text-base leading-relaxed sm:text-lg">
+            공식 웹사이트와 App Store 안내를 기준으로 보면, 메트로 타이핑은 단순한
+            역 이름 입력뿐 아니라 노선 퀴즈와 멀티플레이, 기록 비교까지 여러 방식으로
+            지하철 타자 연습을 이어갈 수 있습니다.
+          </p>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {KOREAN_HOME_MODES.map((mode) => (
+              <article
+                key={mode.title}
+                className="border-border bg-muted/20 rounded-xl border p-5"
+              >
+                <h3 className="text-lg font-semibold">{mode.title}</h3>
+                <p className="text-muted-foreground mt-2 text-sm leading-7 sm:text-base">
+                  {mode.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
         id="howto"
         className="border-border scroll-mt-20 border-t px-4 py-14 sm:px-6 sm:py-16"
       >
@@ -123,21 +153,15 @@ function KoreanSeoContent() {
             <p>
               싱글 플레이에서는 먼저 지역과 노선을 선택하고 출발역과 도착역을
               정합니다. 공식 App Store 설명에 따르면 역 이름을 정확하게 입력하면
-              지하철이 다음 역으로 이동합니다. 따라서 역 이름 타자 연습을 시작할
-              때는 원하는 노선과 구간을 고른 뒤 화면에 나온 역 이름을 정확하게
-              입력하는 것이 기본 흐름입니다.
+              지하철이 다음 역으로 이동합니다. 역 이름 타자 연습을 시작할 때는
+              원하는 노선과 구간을 고른 뒤 화면에 나온 역 이름을 입력하는 것이
+              기본 흐름입니다.
             </p>
             <p>
-              기록을 비교하려면 같은 노선과 같은 구간처럼 조건을 맞춰 두는 편이
-              결과를 해석하기 쉽습니다. 공식 랭킹에서는 평균 타수, 정확도와 완주
-              기록을 확인할 수 있으므로 한 가지 숫자만 보기보다 세 항목을 함께
-              확인할 수 있습니다. 노선별 랭킹 기능도 공식적으로 제공됩니다.
-            </p>
-            <p>
-              공식 안내 기준으로 싱글 플레이와 노선 퀴즈는 로그인 없이 이용할 수
-              있습니다. 프로필을 만들면 랭킹과 멀티플레이 기능을 이용할 수 있으며,
-              멀티플레이는 공식 앱 설명에서 최대 4명이 같은 노선에서 동시에
-              출발하는 방식으로 안내되어 있습니다.
+              공식 랭킹에서는 평균 타수, 정확도와 완주 기록을 확인할 수 있고
+              노선별 랭킹에도 도전할 수 있습니다. 싱글 플레이와 노선 퀴즈는
+              로그인 없이 이용할 수 있으며, 프로필을 만들면 랭킹과 멀티플레이
+              기능을 사용할 수 있습니다.
             </p>
           </div>
 
