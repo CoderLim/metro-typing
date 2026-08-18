@@ -87,10 +87,10 @@ function buildStructuredData(
       '@type': 'FAQPage',
       mainEntity: faq.map((item) => ({
         '@type': 'Question',
-        name: 'question' in item ? item.question : item.question,
+        name: item.question,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'answer' in item ? item.answer : item.answer,
+          text: item.answer,
         },
       })),
     },
