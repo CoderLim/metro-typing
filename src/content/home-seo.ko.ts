@@ -11,6 +11,29 @@ export const KOREAN_HOME_LINES = [
   { href: '/lines/sillim-line', label: '신림선 역 이름 타자연습' },
 ] as const;
 
+export const KOREAN_HOME_MODES = [
+  {
+    title: '싱글 플레이',
+    description:
+      '지역과 노선, 출발역과 도착역을 선택해 운행을 시작합니다. 역 이름을 정확하게 입력할 때마다 지하철이 다음 역으로 이동합니다.',
+  },
+  {
+    title: '노선 퀴즈',
+    description:
+      '노선도에 숨겨진 역 이름을 맞히는 모드입니다. 공식 앱 안내에 따르면 난이도, 문제 수, 출제 노선과 환승역 출제 여부를 설정할 수 있습니다.',
+  },
+  {
+    title: '실시간 멀티플레이',
+    description:
+      '최대 4명이 같은 노선에서 동시에 출발할 수 있습니다. 공개방과 비밀방을 만들고 친구를 초대하는 기능도 공식적으로 제공됩니다.',
+  },
+  {
+    title: '자유 운행과 공식 랭킹',
+    description:
+      '원하는 구간을 선택하거나 왕복·순환 무한 운행을 이용할 수 있습니다. 공식 랭킹에서는 평균 타수, 정확도와 완주 기록을 확인할 수 있습니다.',
+  },
+] as const;
+
 export const KOREAN_HOME_FAQS = [
   {
     question: '메트로 타이핑에서 역 이름 타자는 어떻게 하나요?',
