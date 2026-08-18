@@ -45,6 +45,9 @@ function GuideLink({ href, children }: { href: string; children: string }) {
 
 export function SeoContent() {
   const locale = getLocale();
+  const isKorean = locale === 'ko';
+  const linesP1 = m['landing.seo.lines.p1']();
+  const tipsP1 = m['landing.seo.tips.p1']();
   const faqs = [
     { q: m['landing.seo.faq.q1'](), a: m['landing.seo.faq.a1']() },
     { q: m['landing.seo.faq.q2'](), a: m['landing.seo.faq.a2']() },
@@ -58,7 +61,7 @@ export function SeoContent() {
       <section id="about" className="scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <h1 className="font-serif text-4xl leading-tight tracking-tight sm:text-5xl">
-            {m['landing.seo.h1']()}
+            {isKorean ? '메트로 타이핑(메트로타이핑)' : m['landing.seo.h1']()}
           </h1>
           <h2 className="mt-10 font-serif text-2xl tracking-tight sm:text-3xl">
             {m['landing.seo.about.title']()}
@@ -113,7 +116,11 @@ export function SeoContent() {
             {m['landing.seo.lines.title']()}
           </h2>
           <div className="text-muted-foreground mt-6 space-y-4 text-base leading-relaxed sm:text-lg">
-            <p>{m['landing.seo.lines.p1']()}</p>
+            <p>
+              {isKorean
+                ? linesP1.replace('메트로 타이핑', '메트로타이핑')
+                : linesP1}
+            </p>
             <SeoImage
               src="/imgs/screenshots/result.png"
               alt={m['landing.seo.img.result_alt']()}
@@ -123,7 +130,7 @@ export function SeoContent() {
             <p>{m['landing.seo.lines.p2']()}</p>
             <p>{m['landing.seo.lines.p3']()}</p>
           </div>
-          {locale === 'ko' && (
+          {isKorean && (
             <Link
               href="/subway-map-typing"
               className="border-border bg-muted/30 hover:bg-muted/50 mt-8 block rounded-xl border p-5 transition-colors"
@@ -151,7 +158,11 @@ export function SeoContent() {
             {m['landing.seo.tips.title']()}
           </h2>
           <div className="text-muted-foreground mt-6 space-y-4 text-base leading-relaxed sm:text-lg">
-            <p>{m['landing.seo.tips.p1']()}</p>
+            <p>
+              {isKorean
+                ? tipsP1.replace('메트로 타이핑', '메트로타이핑')
+                : tipsP1}
+            </p>
             <p>{m['landing.seo.tips.p2']()}</p>
             <p>{m['landing.seo.tips.p3']()}</p>
           </div>
