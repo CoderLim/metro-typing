@@ -10,6 +10,7 @@ import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
 import { SeoContent } from '@/blocks/seo-content';
 import { SupportedCountries } from '@/blocks/supported-countries';
+import { KOREAN_HOME_FAQS } from '@/content/home-seo.ko';
 import {
   getLocalPostSummaries,
   mergePosts,
@@ -36,28 +37,31 @@ function buildStructuredData(
   title: string,
   description: string
 ) {
-  const faq = [
-    {
-      question: m['landing.seo.faq.q1']({}, { locale }),
-      answer: m['landing.seo.faq.a1']({}, { locale }),
-    },
-    {
-      question: m['landing.seo.faq.q2']({}, { locale }),
-      answer: m['landing.seo.faq.a2']({}, { locale }),
-    },
-    {
-      question: m['landing.seo.faq.q3']({}, { locale }),
-      answer: m['landing.seo.faq.a3']({}, { locale }),
-    },
-    {
-      question: m['landing.seo.faq.q4']({}, { locale }),
-      answer: m['landing.seo.faq.a4']({}, { locale }),
-    },
-    {
-      question: m['landing.seo.faq.q5']({}, { locale }),
-      answer: m['landing.seo.faq.a5']({}, { locale }),
-    },
-  ];
+  const faq =
+    locale === 'ko'
+      ? KOREAN_HOME_FAQS
+      : [
+          {
+            question: m['landing.seo.faq.q1']({}, { locale }),
+            answer: m['landing.seo.faq.a1']({}, { locale }),
+          },
+          {
+            question: m['landing.seo.faq.q2']({}, { locale }),
+            answer: m['landing.seo.faq.a2']({}, { locale }),
+          },
+          {
+            question: m['landing.seo.faq.q3']({}, { locale }),
+            answer: m['landing.seo.faq.a3']({}, { locale }),
+          },
+          {
+            question: m['landing.seo.faq.q4']({}, { locale }),
+            answer: m['landing.seo.faq.a4']({}, { locale }),
+          },
+          {
+            question: m['landing.seo.faq.q5']({}, { locale }),
+            answer: m['landing.seo.faq.a5']({}, { locale }),
+          },
+        ];
 
   return [
     {
@@ -83,10 +87,10 @@ function buildStructuredData(
       '@type': 'FAQPage',
       mainEntity: faq.map((item) => ({
         '@type': 'Question',
-        name: item.question,
+        name: 'question' in item ? item.question : item.question,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: item.answer,
+          text: 'answer' in item ? item.answer : item.answer,
         },
       })),
     },
