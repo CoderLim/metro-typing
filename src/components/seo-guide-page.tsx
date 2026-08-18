@@ -121,7 +121,15 @@ export function SeoGuidePage({
         </aside>
       ) : null}
 
-      <div className="mt-10">
+      <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+        {korean ? (
+          <Link
+            href="/"
+            className="text-primary hover:text-primary/80 text-sm font-medium"
+          >
+            ← 메트로 타이핑
+          </Link>
+        ) : null}
         <Link
           href={backHref}
           className="text-primary hover:text-primary/80 text-sm font-medium"
