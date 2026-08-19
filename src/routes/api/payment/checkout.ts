@@ -60,7 +60,12 @@ async function POST({ request }: { request: Request }) {
     const testAmountRaw = providerKey
       ? configs[`${providerKey}_test_amount`]
       : undefined;
-    const testAmount = testAmountRaw ? parseInt(testAmountRaw) : 0;
+    // Never honor test-amount overrides in production - an admin who forgets to
+    // clear a 1-cent test amount would let users buy full credits for nothing.
+    const testAmount =
+      testAmountRaw && process.env.NODE_ENV !== 'production'
+        ? parseInt(testAmountRaw)
+        : 0;
     const chargeAmount = testAmount > 0 ? testAmount : product.priceInCents;
 
     // Build success/cancel URLs — only accept same-origin redirects.

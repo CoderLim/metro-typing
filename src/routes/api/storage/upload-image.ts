@@ -16,7 +16,6 @@ const extFromMime = (mimeType: string) => {
     'image/png': 'png',
     'image/webp': 'webp',
     'image/gif': 'gif',
-    'image/svg+xml': 'svg',
     'image/avif': 'avif',
     'image/heic': 'heic',
     'image/heif': 'heif',
@@ -24,7 +23,8 @@ const extFromMime = (mimeType: string) => {
   return map[mimeType] || '';
 };
 
-// Cap for the no-storage local-disk fallback (dev). Configurable via INLINE_IMAGE_MAX_KB.
+// Max upload size, enforced on every path (local-disk fallback and remote R2).
+// Configurable via INLINE_IMAGE_MAX_KB (default 10MB).
 const INLINE_MAX_BYTES =
   (Number(envConfigs.inline_image_max_kb) || 10240) * 1024;
 
@@ -56,9 +56,23 @@ async function POST({ request }: { request: Request }) {
       if (!file.type.startsWith('image/')) {
         return respErr(`File ${file.name} is not an image`);
       }
+      // SVG can carry embedded <script> / event handlers -> stored XSS when
+      // served inline on the same origin. Reject outright (no sanitization).
+      if (file.type === 'image/svg+xml') {
+        return respErr(`File ${file.name}: SVG uploads are not allowed`);
+      }
 
       const arrayBuffer = await file.arrayBuffer();
       const body = new Uint8Array(arrayBuffer);
+
+      // Enforce a size cap on every upload path (local-disk fallback AND remote
+      // R2), not only the no-storage branch.
+      if (body.length > INLINE_MAX_BYTES) {
+        const limitKb = Math.round(INLINE_MAX_BYTES / 1024);
+        return respErr(
+          `Image too large (${(body.length / 1024).toFixed(0)}KB > ${limitKb}KB). Use a smaller image.`
+        );
+      }
 
       const digest = md5(body);
       const ext =
@@ -74,12 +88,6 @@ async function POST({ request }: { request: Request }) {
       // local URL. Avoids inlining a giant base64 data URL into DB columns (some
       // are varchar(255)). Configure R2 (admin → Storage) for production.
       if (!storage) {
-        if (body.length > INLINE_MAX_BYTES) {
-          const limitKb = Math.round(INLINE_MAX_BYTES / 1024);
-          return respErr(
-            `Image too large (${(body.length / 1024).toFixed(0)}KB > ${limitKb}KB). Configure storage or use a smaller image.`
-          );
-        }
         const dir = path.join(process.cwd(), 'public', 'uploads');
         await mkdir(dir, { recursive: true });
         await writeFile(path.join(dir, objectKey), body);

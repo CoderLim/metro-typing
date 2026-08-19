@@ -151,7 +151,7 @@ export async function consume(params: {
     const consumedItems: any[] = [];
 
     while (remainingToConsume > 0 && batchNo < maxBatches) {
-      const batchCredits = await tx
+      const batchQuery = tx
         .select()
         .from(credit)
         .where(
@@ -164,8 +164,12 @@ export async function consume(params: {
           )
         )
         .orderBy(asc(credit.expiresAt))
-        .limit(batchSize)
-        .for('update');
+        .limit(batchSize);
+      // `.for('update')` is only supported by Postgres/MySQL; SQLite lacks
+      // row-level locks (its transaction serialization still prevents races).
+      const batchCredits = await (batchQuery.for
+        ? batchQuery.for('update')
+        : batchQuery);
 
       if (!batchCredits || batchCredits.length === 0) break;
 
