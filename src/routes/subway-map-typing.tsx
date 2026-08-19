@@ -1,10 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { Link } from '@/core/i18n/navigation';
+import { localeSeoLinks } from '@/core/i18n/seo';
+import { envConfigs } from '@/config';
+import { getLocale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
-import { envConfigs } from '@/config';
-import { Link } from '@/core/i18n/navigation';
 
 const PAGE_PATH = '/subway-map-typing';
 const GAME_URL = 'https://metrotyping.kr/';
@@ -132,25 +134,29 @@ const relatedPages = [
   {
     eyebrow: 'GUIDE',
     title: '역 이름 타자 연습',
-    description: '역 이름을 어떤 순서로 입력하는지 기본 플레이 흐름부터 확인하세요.',
+    description:
+      '역 이름을 어떤 순서로 입력하는지 기본 플레이 흐름부터 확인하세요.',
     href: '/how-to-play',
   },
   {
     eyebrow: 'LINES',
     title: '지하철 노선도 게임',
-    description: '지원 노선과 노선별 특징을 보고 다음에 완주할 지하철을 골라보세요.',
+    description:
+      '지원 노선과 노선별 특징을 보고 다음에 완주할 지하철을 골라보세요.',
     href: '/supported-lines',
   },
   {
     eyebrow: 'PRACTICE',
     title: '지하철 타자 기록 줄이기',
-    description: '정확도를 유지하면서 완주 시간을 줄이는 반복 연습 팁을 확인하세요.',
+    description:
+      '정확도를 유지하면서 완주 시간을 줄이는 반복 연습 팁을 확인하세요.',
     href: '/tips',
   },
   {
     eyebrow: 'JAPAN',
     title: '기차역 타자연습',
-    description: '다른 역 이름 타이핑을 찾는다면 일본 전철 타이핑 페이지도 이어서 즐겨보세요.',
+    description:
+      '다른 역 이름 타이핑을 찾는다면 일본 전철 타이핑 페이지도 이어서 즐겨보세요.',
     href: '/japan-metro-typing',
   },
 ];
@@ -260,7 +266,10 @@ function SubwayMapTypingPage() {
               지하철 노선도 타이핑 - 서울 지하철 노선도를 완주하세요
             </h1>
             <p className="text-muted-foreground mx-auto mt-5 max-w-3xl text-lg leading-8 sm:text-xl">
-              역 이름을 입력하며 노선도를 따라 달리는 타이핑 게임. 지하철 노선도 타이핑은 서울 지하철 역 이름을 순서대로 입력하고 한 노선을 끝까지 완주하는 방식입니다. 설치 없이 브라우저에서 바로 시작할 수 있어 익숙한 노선을 타자 연습처럼 즐길 수 있습니다.
+              역 이름을 입력하며 노선도를 따라 달리는 타이핑 게임. 지하철 노선도
+              타이핑은 서울 지하철 역 이름을 순서대로 입력하고 한 노선을 끝까지
+              완주하는 방식입니다. 설치 없이 브라우저에서 바로 시작할 수 있어
+              익숙한 노선을 타자 연습처럼 즐길 수 있습니다.
             </p>
           </div>
         </section>
@@ -378,7 +387,11 @@ function SubwayMapTypingPage() {
             </div>
 
             <p className="text-muted-foreground mx-auto mt-6 max-w-4xl text-center leading-7">
-              랭킹 프레임이 브라우저 정책이나 네트워크 상태 때문에 보이지 않는 경우에는 공식 랭킹 페이지를 새 창에서 확인할 수 있습니다. 지하철 노선도 타이핑 기록을 비교할 때는 노선과 플레이 조건이 다를 수 있으므로 숫자 하나만 보기보다 같은 조건에서 자신의 이전 기록과 비교하는 편이 유용합니다.
+              랭킹 프레임이 브라우저 정책이나 네트워크 상태 때문에 보이지 않는
+              경우에는 공식 랭킹 페이지를 새 창에서 확인할 수 있습니다. 지하철
+              노선도 타이핑 기록을 비교할 때는 노선과 플레이 조건이 다를 수
+              있으므로 숫자 하나만 보기보다 같은 조건에서 자신의 이전 기록과
+              비교하는 편이 유용합니다.
             </p>
           </div>
         </section>
@@ -460,8 +473,13 @@ function SubwayMapTypingPage() {
 }
 
 export const Route = createFileRoute('/subway-map-typing')({
-  head: () => {
-    const canonical = `${envConfigs.app_url}${PAGE_PATH}`;
+  loader: () => {
+    const locale = getLocale();
+    return { locale };
+  },
+  head: ({ loaderData }) => {
+    const locale = loaderData?.locale ?? 'ko';
+    const { canonical, links } = localeSeoLinks(PAGE_PATH, locale);
     const ogImage = `${envConfigs.app_url}/imgs/screenshots/playing.png`;
     const structuredData = buildStructuredData(canonical);
 
@@ -488,7 +506,7 @@ export const Route = createFileRoute('/subway-map-typing')({
         { name: 'twitter:image', content: ogImage },
       ],
       links: [
-        { rel: 'canonical', href: canonical },
+        ...links,
         { rel: 'preconnect', href: GAME_URL },
         { rel: 'dns-prefetch', href: GAME_URL },
       ],
