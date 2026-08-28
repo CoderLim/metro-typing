@@ -11,9 +11,9 @@ export const Route = createFileRoute('/(pages)')({
 
 function PagesLayout() {
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col">
+    <div className="bg-background text-foreground flex min-h-screen flex-col overflow-x-hidden">
       <Header />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 pt-8 pb-12 md:px-8 md:pt-12 md:pb-16">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pt-8 pb-12 sm:px-6 md:px-8 md:pt-12 md:pb-16">
         <MDXProvider components={mdxComponents}>
           <Outlet />
         </MDXProvider>

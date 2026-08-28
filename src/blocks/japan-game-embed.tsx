@@ -28,7 +28,7 @@ export function JapanGameEmbed() {
   return (
     <section
       id="play"
-      className="relative h-[calc(100dvh-3.5rem)] min-h-[36rem] w-full overflow-hidden bg-neutral-950"
+      className="relative h-[calc(100dvh-3.5rem)] min-h-[min(36rem,100dvh-3.5rem)] w-full max-w-[100vw] overflow-hidden bg-neutral-950"
       aria-label={labels.section}
     >
       <iframe

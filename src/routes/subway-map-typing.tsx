@@ -7,6 +7,7 @@ import { getLocale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
+import { AdsterraSlot } from '@/components/ads';
 
 const PAGE_PATH = '/subway-map-typing';
 const GAME_URL = 'https://metrotyping.kr/';
@@ -275,6 +276,8 @@ function SubwayMapTypingPage() {
         </section>
 
         <GameEmbed />
+
+        <AdsterraSlot slot="below-game" className="border-border border-b" />
 
         <section className="px-4 py-16 sm:py-24">
           <div className="mx-auto max-w-6xl">

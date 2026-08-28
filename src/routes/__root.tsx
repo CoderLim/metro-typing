@@ -15,6 +15,13 @@ import { ThemeProvider } from 'next-themes';
 import { envConfigs } from '@/config';
 import { getQueryClient } from '@/lib/query-client';
 import { getLocale } from '@/paraglide/runtime.js';
+import {
+  ADSTERRA_CONFIG_KEYS,
+  AdsterraProvider,
+  AdsterraSticky,
+  normalizeAdsterraConfig,
+  type AdsterraConfig,
+} from '@/components/ads';
 import { AdsAccountMeta, AdsLoader } from '@/components/analytics/ads';
 import { GoogleAnalytics } from '@/components/analytics/google-analytics';
 import { Plausible } from '@/components/analytics/plausible';
@@ -41,6 +48,11 @@ const ANALYTICS_CONFIG_KEYS = [
   'tawk_widget_id',
 ] as const;
 
+const RUNTIME_CONFIG_KEYS = [
+  ...ANALYTICS_CONFIG_KEYS,
+  ...ADSTERRA_CONFIG_KEYS,
+] as const;
+
 const INITIAL_ANALYTICS_TIMEOUT_MS = 75;
 const ANALYTICS_CACHE_TTL_MS = 60 * 60 * 1000;
 
@@ -52,6 +64,11 @@ type AnalyticsConfig = {
   crispWebsiteId: string;
   tawkPropertyId: string;
   tawkWidgetId: string;
+};
+
+type RootIntegrations = {
+  analytics: AnalyticsConfig;
+  adsterra: AdsterraConfig;
 };
 
 function normalizeAnalytics(configs: Record<string, string>): AnalyticsConfig {
@@ -75,28 +92,28 @@ function normalizeAnalytics(configs: Record<string, string>): AnalyticsConfig {
   };
 }
 
-const envAnalytics = normalizeAnalytics(
-  envConfigs as unknown as Record<string, string>
-);
-let cachedAnalytics: AnalyticsConfig | null = null;
-let cachedAnalyticsAt = 0;
+const envRecord = envConfigs as unknown as Record<string, string>;
+const envIntegrations: RootIntegrations = {
+  analytics: normalizeAnalytics(envRecord),
+  adsterra: normalizeAdsterraConfig(envRecord),
+};
+let cachedIntegrations: RootIntegrations | null = null;
+let cachedIntegrationsAt = 0;
 
 // Query only the runtime integration keys instead of SELECT * FROM config.
 // Warm instances serve a one-hour in-memory cache. The initial root loader is
 // also time-bounded; a slower cold-start query finishes after hydration and
 // updates the integrations without delaying first paint.
-const getAnalyticsConfigs = createServerFn().handler(async () => {
+const getRootIntegrations = createServerFn().handler(async () => {
   const now = Date.now();
   if (
-    cachedAnalytics &&
-    now - cachedAnalyticsAt < ANALYTICS_CACHE_TTL_MS
+    cachedIntegrations &&
+    now - cachedIntegrationsAt < ANALYTICS_CACHE_TTL_MS
   ) {
-    return cachedAnalytics;
+    return cachedIntegrations;
   }
 
-  const merged: Record<string, string> = {
-    ...(envConfigs as unknown as Record<string, string>),
-  };
+  const merged: Record<string, string> = { ...envRecord };
 
   try {
     if (envConfigs.database_url || envConfigs.database_provider === 'd1') {
@@ -108,7 +125,7 @@ const getAnalyticsConfigs = createServerFn().handler(async () => {
       const rows = await db()
         .select({ name: config.name, value: config.value })
         .from(config)
-        .where(inArray(config.name, [...ANALYTICS_CONFIG_KEYS]));
+        .where(inArray(config.name, [...RUNTIME_CONFIG_KEYS]));
 
       for (const row of rows) {
         if (row.name && row.value !== null && row.value !== undefined) {
@@ -117,26 +134,29 @@ const getAnalyticsConfigs = createServerFn().handler(async () => {
       }
     }
   } catch {
-    // Database-backed analytics are optional; environment values still work.
+    // Database-backed integrations are optional; environment values still work.
   }
 
-  const next = normalizeAnalytics(merged);
-  cachedAnalytics = next;
-  cachedAnalyticsAt = now;
+  const next: RootIntegrations = {
+    analytics: normalizeAnalytics(merged),
+    adsterra: normalizeAdsterraConfig(merged),
+  };
+  cachedIntegrations = next;
+  cachedIntegrationsAt = now;
   return next;
 });
 
-async function loadInitialAnalytics(): Promise<AnalyticsConfig> {
+async function loadInitialIntegrations(): Promise<RootIntegrations> {
   return Promise.race([
-    getAnalyticsConfigs(),
-    new Promise<AnalyticsConfig>((resolve) => {
-      setTimeout(() => resolve(envAnalytics), INITIAL_ANALYTICS_TIMEOUT_MS);
+    getRootIntegrations(),
+    new Promise<RootIntegrations>((resolve) => {
+      setTimeout(() => resolve(envIntegrations), INITIAL_ANALYTICS_TIMEOUT_MS);
     }),
   ]);
 }
 
 export const Route = createRootRoute({
-  loader: loadInitialAnalytics,
+  loader: loadInitialIntegrations,
   head: () => {
     // Page-specific hreflang/canonical live on each route's head() via
     // localeSeoLinks() — do not emit homepage alternates here or every
@@ -177,15 +197,15 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  const initialAnalytics = Route.useLoaderData() ?? envAnalytics;
-  const [analytics, setAnalytics] =
-    useState<AnalyticsConfig>(initialAnalytics);
+  const initial = Route.useLoaderData() ?? envIntegrations;
+  const [integrations, setIntegrations] = useState<RootIntegrations>(initial);
+  const { analytics, adsterra } = integrations;
 
   useEffect(() => {
     let active = true;
-    getAnalyticsConfigs()
+    getRootIntegrations()
       .then((next) => {
-        if (active) setAnalytics(next);
+        if (active) setIntegrations(next);
       })
       .catch(() => {
         // Environment values from the initial render remain active.
@@ -204,30 +224,33 @@ function RootComponent() {
         enableSystem
         disableTransitionOnChange
       >
-        <Outlet />
-        <SandboxPreviewBridge />
-        <Toaster position="top-center" richColors />
-        <GoogleOneTap />
-        {analytics.adsenseCode ? (
-          <>
-            <AdsAccountMeta code={analytics.adsenseCode} />
-            <AdsLoader code={analytics.adsenseCode} />
-          </>
-        ) : null}
-        {analytics.gaId ? (
-          <GoogleAnalytics measurementId={analytics.gaId} />
-        ) : null}
-        {analytics.plausibleDomain || analytics.plausibleSrc ? (
-          <Plausible
-            domain={analytics.plausibleDomain}
-            src={analytics.plausibleSrc || undefined}
+        <AdsterraProvider config={adsterra}>
+          <Outlet />
+          <AdsterraSticky />
+          <SandboxPreviewBridge />
+          <Toaster position="top-center" richColors />
+          <GoogleOneTap />
+          {analytics.adsenseCode ? (
+            <>
+              <AdsAccountMeta code={analytics.adsenseCode} />
+              <AdsLoader code={analytics.adsenseCode} />
+            </>
+          ) : null}
+          {analytics.gaId ? (
+            <GoogleAnalytics measurementId={analytics.gaId} />
+          ) : null}
+          {analytics.plausibleDomain || analytics.plausibleSrc ? (
+            <Plausible
+              domain={analytics.plausibleDomain}
+              src={analytics.plausibleSrc || undefined}
+            />
+          ) : null}
+          <CustomerService
+            crispWebsiteId={analytics.crispWebsiteId || undefined}
+            tawkPropertyId={analytics.tawkPropertyId || undefined}
+            tawkWidgetId={analytics.tawkWidgetId || undefined}
           />
-        ) : null}
-        <CustomerService
-          crispWebsiteId={analytics.crispWebsiteId || undefined}
-          tawkPropertyId={analytics.tawkPropertyId || undefined}
-          tawkWidgetId={analytics.tawkWidgetId || undefined}
-        />
+        </AdsterraProvider>
       </ThemeProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>

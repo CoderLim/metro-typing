@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
+import { AdsterraSlot } from '@/components/ads';
 import type { ResolvedSeoGuide } from '@/content/seo-guides';
 
 export type GuideSummary = {
@@ -56,6 +57,8 @@ export function SeoGuidePage({
         </p>
       </header>
 
+      <AdsterraSlot slot="content-top" />
+
       <div className="text-foreground/90 space-y-10 text-[15px] leading-7">
         <p className="text-base leading-8">{guide.intro}</p>
 
@@ -94,6 +97,8 @@ export function SeoGuidePage({
           <p className="mt-5 font-medium">{guide.cta}</p>
         </section>
       </div>
+
+      <AdsterraSlot slot="content-end" />
 
       {related.length > 0 ? (
         <aside className="border-border mt-12 border-t pt-8">

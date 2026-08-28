@@ -88,4 +88,21 @@ export const envConfigs: Record<string, string> = {
   plausible_src: procEnv.PLAUSIBLE_SRC ?? '',
   google_analytics_id: procEnv.GOOGLE_ANALYTICS_ID ?? '',
   adsense_code: procEnv.ADSENSE_CODE ?? '',
+
+  // Adsterra — admin Settings override these; env is the fallback.
+  // Master kill switch: set ADSTERRA_ENABLED=false (or flip the admin switch)
+  // to disable every Adsterra slot/sticky at once.
+  adsterra_enabled: procEnv.ADSTERRA_ENABLED ?? '',
+  adsterra_invoke_host: procEnv.ADSTERRA_INVOKE_HOST ?? '',
+  adsterra_publisher_id: procEnv.ADSTERRA_PUBLISHER_ID ?? '',
+  adsterra_sticky_script_src: procEnv.ADSTERRA_STICKY_SCRIPT_SRC ?? '',
+  adsterra_below_game_key: procEnv.ADSTERRA_BELOW_GAME_KEY ?? '',
+  adsterra_below_game_width: procEnv.ADSTERRA_BELOW_GAME_WIDTH ?? '',
+  adsterra_below_game_height: procEnv.ADSTERRA_BELOW_GAME_HEIGHT ?? '',
+  adsterra_content_top_key: procEnv.ADSTERRA_CONTENT_TOP_KEY ?? '',
+  adsterra_content_top_width: procEnv.ADSTERRA_CONTENT_TOP_WIDTH ?? '',
+  adsterra_content_top_height: procEnv.ADSTERRA_CONTENT_TOP_HEIGHT ?? '',
+  adsterra_content_end_key: procEnv.ADSTERRA_CONTENT_END_KEY ?? '',
+  adsterra_content_end_width: procEnv.ADSTERRA_CONTENT_END_WIDTH ?? '',
+  adsterra_content_end_height: procEnv.ADSTERRA_CONTENT_END_HEIGHT ?? '',
 };

@@ -4,6 +4,7 @@ import { notFound, useLoaderData } from '@tanstack/react-router';
 import { localeSeoLinks } from '@/core/i18n/seo';
 import { m } from '@/paraglide/messages.js';
 import { baseLocale, getLocale } from '@/paraglide/runtime.js';
+import { AdsterraSlot } from '@/components/ads';
 
 type PageMeta = {
   title: string;
@@ -80,9 +81,11 @@ function StaticPage() {
           {m['common.pages.last_updated']()}: {meta.updated_at}
         </p>
       </header>
+      <AdsterraSlot slot="content-top" />
       <div className="text-foreground/90 text-[15px] leading-7">
         <Content />
       </div>
+      <AdsterraSlot slot="content-end" />
     </article>
   );
 }

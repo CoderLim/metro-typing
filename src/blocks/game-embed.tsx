@@ -3,27 +3,20 @@ import { m } from '@/paraglide/messages.js';
 const GAME_SRC = 'https://metrotyping.kr/';
 
 /**
- * Crops the embedded site's own chrome (title bar with donate/login/settings
- * + donation banner). Measured ~120px desktop / ~100px mobile — use the
- * larger value so both are fully covered.
+ * Crops the embedded site's own chrome (title bar, donate banner, promo bar).
+ * clip-path in globals.css keeps the shifted iframe from painting under our header.
  */
-const IFRAME_TOP_CROP = '7.5rem'; // 120px
-
 export function GameEmbed() {
   return (
     <section
       id="play"
-      className="relative h-[calc(100dvh-3.5rem)] min-h-[36rem] w-full overflow-hidden bg-neutral-950"
+      className="relative isolate z-0 h-[calc(100dvh-3.5rem)] min-h-[min(36rem,100dvh-3.5rem)] w-full max-w-[100vw] overflow-hidden bg-neutral-950 [contain:paint]"
       aria-label={m['landing.game.title']()}
     >
       <iframe
         src={GAME_SRC}
         title={m['landing.game.iframe_title']()}
-        className="absolute left-0 w-full border-0"
-        style={{
-          top: `calc(-1 * ${IFRAME_TOP_CROP})`,
-          height: `calc(100% + ${IFRAME_TOP_CROP})`,
-        }}
+        className="game-embed-frame absolute left-0 w-full border-0"
         allow="fullscreen; autoplay; clipboard-write"
         allowFullScreen
         loading="eager"

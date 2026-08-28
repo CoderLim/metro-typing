@@ -176,3 +176,25 @@
     }
   }
 }
+
+@layer components {
+  /*
+   * Hide metrotyping.kr top chrome inside the embed.
+   * Use clip-path (not only overflow:hidden) — mobile Safari often paints
+   * iframes through parent overflow clipping when shifted with negative top.
+   */
+  .game-embed-frame {
+    top: 0;
+    height: calc(100% + 8.5rem);
+    transform: translateY(-8.5rem);
+    clip-path: inset(8.5rem 0 0 0);
+  }
+
+  @media (min-width: 768px) {
+    .game-embed-frame {
+      height: calc(100% + 7.5rem);
+      transform: translateY(-7.5rem);
+      clip-path: inset(7.5rem 0 0 0);
+    }
+  }
+}

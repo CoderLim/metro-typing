@@ -9,6 +9,7 @@ import { m } from '@/paraglide/messages.js';
 import { getLocale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { Header } from '@/blocks/header';
+import { AdsterraSlot } from '@/components/ads';
 import { MarkdownContent } from '@/components/markdown-content';
 import { mdxComponents } from '@/components/mdx-components';
 import { formatPostDate, loadLocalPost } from '@/content/posts';
@@ -50,9 +51,7 @@ export const Route = createFileRoute('/blog/$slug')({
         author: {
           '@type': 'Person',
           name: authorName,
-          ...(post.authorImage
-            ? { image: absoluteUrl(post.authorImage) }
-            : {}),
+          ...(post.authorImage ? { image: absoluteUrl(post.authorImage) } : {}),
         },
         publisher: {
           '@type': 'Organization',
@@ -181,6 +180,8 @@ function BlogPostPage() {
             </div>
           </header>
 
+          <AdsterraSlot slot="content-top" />
+
           {post.image && (
             <img
               src={post.image}
@@ -204,6 +205,8 @@ function BlogPostPage() {
           ) : (
             <MarkdownContent content={post.content || ''} />
           )}
+
+          <AdsterraSlot slot="content-end" />
         </article>
       </main>
       <Footer />

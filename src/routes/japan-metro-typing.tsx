@@ -1,13 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { localeSeoLinks } from '@/core/i18n/seo';
+import { envConfigs } from '@/config';
+import { getLocale, type Locale } from '@/paraglide/runtime.js';
 import { Footer } from '@/blocks/footer';
 import { Header } from '@/blocks/header';
-import { JapanGameEmbed, JAPAN_GAME_URL } from '@/blocks/japan-game-embed';
+import { JAPAN_GAME_URL, JapanGameEmbed } from '@/blocks/japan-game-embed';
 import { JapanSeoContent } from '@/blocks/japan-seo-content';
-import { envConfigs } from '@/config';
+import { AdsterraSlot } from '@/components/ads';
 import { getJapanMetroPageCopy } from '@/content/japan-metro-page';
-import { localeSeoLinks } from '@/core/i18n/seo';
-import { getLocale, type Locale } from '@/paraglide/runtime.js';
 
 const OG_LOCALE: Record<string, string> = {
   ko: 'ko_KR',
@@ -91,6 +92,7 @@ function JapanMetroTypingPage() {
     <div className="bg-background text-foreground flex min-h-screen flex-col">
       <Header />
       <JapanGameEmbed />
+      <AdsterraSlot slot="below-game" className="border-border border-b" />
       <main>
         <JapanSeoContent />
       </main>
@@ -108,10 +110,7 @@ export const Route = createFileRoute('/japan-metro-typing')({
   head: ({ loaderData }) => {
     const locale = (loaderData?.locale ?? 'ja') as Locale;
     const copy = loaderData?.copy ?? getJapanMetroPageCopy(locale);
-    const { canonical, links } = localeSeoLinks(
-      '/japan-metro-typing',
-      locale
-    );
+    const { canonical, links } = localeSeoLinks('/japan-metro-typing', locale);
     const ogImage = `${envConfigs.app_url}/logo.png`;
     const structuredData = buildStructuredData(locale, canonical, copy);
 

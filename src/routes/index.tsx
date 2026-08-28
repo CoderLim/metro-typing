@@ -10,11 +10,9 @@ import { GameEmbed } from '@/blocks/game-embed';
 import { Header } from '@/blocks/header';
 import { SeoContent } from '@/blocks/seo-content';
 import { SupportedCountries } from '@/blocks/supported-countries';
+import { AdsterraSlot } from '@/components/ads';
 import { KOREAN_HOME_FAQS } from '@/content/home-seo.ko';
-import {
-  getLocalPostSummaries,
-  mergePosts,
-} from '@/content/posts/catalog';
+import { getLocalPostSummaries, mergePosts } from '@/content/posts/catalog';
 
 const GAME_URL = 'https://metrotyping.kr/';
 
@@ -101,9 +99,10 @@ function HomePage() {
   const { posts } = Route.useLoaderData();
 
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col">
+    <div className="bg-background text-foreground flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <GameEmbed />
+      <AdsterraSlot slot="below-game" className="border-border border-b" />
       <main>
         <SeoContent />
         <Blog posts={posts} />
@@ -139,8 +138,7 @@ export const Route = createFileRoute('/')({
   head: ({ loaderData }) => {
     const locale = (loaderData?.locale ?? 'ko') as Locale;
     const title = loaderData?.title ?? envConfigs.app_name;
-    const description =
-      loaderData?.description ?? envConfigs.app_description;
+    const description = loaderData?.description ?? envConfigs.app_description;
     const { canonical, links } = localeSeoLinks('/', locale);
     const ogImage = `${envConfigs.app_url}/imgs/screenshots/playing.png`;
     const structuredData = buildStructuredData(
